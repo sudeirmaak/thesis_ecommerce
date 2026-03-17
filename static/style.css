@@ -1,0 +1,138 @@
+body {
+    font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
+    letter-spacing: 0.5px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    }
+
+a {text-decoration: none;}
+ul {padding: 0; list-style: none;}
+
+/* Header */
+
+.navbar {
+    background-color: #FFF4E8 !important;
+    border-bottom: 1px solid #555;
+    padding: 1.5rem 0 !important;
+    }
+
+.brand-main {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 2.4rem;
+    letter-spacing: 4px;
+    color: #000;
+    line-height: 1;
+    }
+
+.brand-sub {
+    font-weight: 500;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    color: #555;
+    text-transform: uppercase;
+    margin-top: 4px;
+    }
+
+.nav-link {
+    color: #000 !important;
+    transition: opacity 0.2s ease-in-out;
+    }
+
+.nav-link:hover {
+    opacity: 0.6;
+    }
+
+/* Footer */
+
+.main-footer {
+    background-color: #403C49;
+    color: #fff;
+    padding: 5rem 0 4rem;
+    }
+
+.footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+    }
+
+.icons a {
+    color: #22242A;
+    background-color: #fff;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+.icons a:hover {
+    transform: translateY(2px);
+    background-color: #555;
+    }
+
+.footer-heading {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    letter-spacing: 1px;
+    }
+
+.main-footer li {
+    margin-bottom: 0.8rem;
+    }
+
+.main-footer a {
+    color: #FFF4E8;
+    transition: color 0.2s;
+    font-size: 0.8rem;
+    }
+
+.main-footer a:hover {
+    color: #fff;
+    }
+
+.contact-item {
+    display: flex;
+    align-items: flex-start;
+    color: #FFF4E8;
+    font-size: 0.8rem;
+    margin-bottom: 1.25rem;
+    }
+
+.contact-item i {
+    font-size: 1.2rem;
+    margin-right: 15px;
+    line-height: 1;
+    }
+
+/* Bottom Footer */
+
+.bottom-footer {
+    background-color: #22242A;
+    color: #FFF4E8;
+    padding: 1.5rem 0;
+    font-size: 0.8rem;
+    }
+
+.bottom-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 0.5rem;
+    }
+
+.bottom-footer a {
+    color: #FFF4E8;
+    transition: color 0.2s;
+    }
+
+.bottom-footer a:hover {
+    color: #fff;
+    }
