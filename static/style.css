@@ -1,3 +1,5 @@
+/* Global */
+
 body {
     font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;
     letter-spacing: 0.5px;
@@ -10,6 +12,18 @@ a {text-decoration: none;}
 ul {padding: 0; list-style: none;}
 
 /* Header */
+
+.navbar .container {
+    position: relative;
+    }
+
+.navbar-brand {
+    position: absolute;
+    margin: 0;
+    text-align: center;
+    left: 50%;
+    transform: translateX(-50%);
+    }
 
 .navbar {
     background-color: #FFF4E8 !important;
@@ -46,6 +60,13 @@ ul {padding: 0; list-style: none;}
 
 /* Footer */
 
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 2.5rem;
+    align-items: start;
+    }
+
 .main-footer {
     background-color: #403C49;
     color: #fff;
@@ -61,8 +82,8 @@ ul {padding: 0; list-style: none;}
     }
 
 .icons a {
-    color: #22242A;
-    background-color: #fff;
+    color: #fff;
+    background-color: #22242A;
     width: 32px;
     height: 32px;
     display: inline-flex;
