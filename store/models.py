@@ -10,9 +10,13 @@ STATUS_CHOICES = [
 class Category(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
+    description = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        verbose_name_plural = 'Categories'
 
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
