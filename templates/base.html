@@ -40,7 +40,7 @@
                     <li class="nav-item">
                         <a class="nav-link fs-3 p-0 d-flex align-items-center gap-1" href="/cart">
                             <i class="bi bi-cart"></i>
-                            <span class="badge bg-dark rounded-pill" style="font-size: 1rem;">0</span> <!-- try to fix hardcoded 0!!!-->
+                            <span class="badge bg-dark rounded-pill" style="font-size: 1rem;">{{ cart_count|default:"0"}}</span> 
                         </a>
                     </li>
                 </ul>
