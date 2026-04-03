@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container py-5">
+    <div class="row gx-5 align-items-center">
+        <div class="col-md-6 mb-4">
+            <img src="{{ product.image.url }}" class="image-fluid w-100 rounded shadow-sm">
+        </div>
+        <div class="col-md-6 mb-5 mb-md-0">
+            <h1>{{ product.name }}</h1>
+            <!-- Dummy Stars for now-->
+            <i class="bi bi-star-fill text-warning"></i>
+            <i class="bi bi-star-fill text-warning"></i>
+            <i class="bi bi-star-fill text-warning"></i>
+            <i class="bi bi-star-fill text-warning"></i>
+            <i class="bi bi-star-half text-warning"></i>
+            <span class="ms-2">4.5 (124 reviews)</span>
+
+            <h2>${{ product.price }}</h2>
+
+            <!-- action method vs later -->
+            <form>
+                <label>Size:</label>
+                <div class="btn-group w-100 mb-3">
+
+                    <input type="radio" class="btn-check" name="size" id="size_250" autocomplete="off" checked>
+                    <label class="btn btn-outline-dark" for="size_250">250g</label>
+
+                    <input type="radio" class="btn-check" name="size" id="size_500" autocomplete="off">
+                    <label class="btn btn-outline-dark" for="size_500">500g</label>
+
+                    <input type="radio" class="btn-check" name="size" id="size_1kg" autocomplete="off">
+                    <label class="btn btn-outline-dark" for="size_1kg">1kg</label>
+
+                </div>
+
+                <label>Grind:</label>
+                <select class="form-select mb-3">
+                    <option>Whole Bean</option>
+                    <option>Espresso</option>
+                    <option>Filter</option>
+                </select>
+
+                <label>Purchase Option:</label>
+                <div class="btn-group w-100 mb-4">
+
+                    <input type="radio" class="btn-check" name="purchase" id="one_time" autocomplete="off" checked>
+                    <label class="btn btn-outline-dark" for="one_time">One-Time</label>
+
+                    <input type="radio" class="btn-check" name="purchase" id="subscription" autocomplete="off">
+                    <label class="btn btn-outline-dark" for="subscription">Subscription</label>
+
+                </div>
+
+                <div class="d-flex align-items-center gap-3">
+                    <input type="number" class="form-control" value="1" min="1" style="width: 80px;">
+                    <button type="submit" class="btn btn-dark btn-lg flex-grow-1">ADD TO CART</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
