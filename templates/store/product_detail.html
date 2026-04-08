@@ -18,42 +18,43 @@
 
             <h2>${{ product.price }}</h2>
 
-            <!-- action method vs later -->
-            <form>
+            <form action="{% url 'add_to_cart' product.id %}" method="POST">
+                {% csrf_token %}
+
                 <label>Size:</label>
                 <div class="btn-group w-100 mb-3">
 
-                    <input type="radio" class="btn-check" name="size" id="size_250" autocomplete="off" checked>
+                    <input type="radio" class="btn-check" name="size" id="size_250" value="250g" autocomplete="off" checked>
                     <label class="btn btn-outline-dark" for="size_250">250g</label>
 
-                    <input type="radio" class="btn-check" name="size" id="size_500" autocomplete="off">
+                    <input type="radio" class="btn-check" name="size" id="size_500" value="500g" autocomplete="off">
                     <label class="btn btn-outline-dark" for="size_500">500g</label>
 
-                    <input type="radio" class="btn-check" name="size" id="size_1kg" autocomplete="off">
+                    <input type="radio" class="btn-check" name="size" id="size_1kg" value="1kg" autocomplete="off">
                     <label class="btn btn-outline-dark" for="size_1kg">1kg</label>
 
                 </div>
 
                 <label>Grind:</label>
-                <select class="form-select mb-3">
-                    <option>Whole Bean</option>
-                    <option>Espresso</option>
-                    <option>Filter</option>
+                <select name="grind" class="form-select mb-3">
+                    <option value="Whole Bean">Whole Bean</option>
+                    <option value="Espresso">Espresso</option>
+                    <option value="Filter">Filter</option>
                 </select>
 
                 <label>Purchase Option:</label>
                 <div class="btn-group w-100 mb-4">
 
-                    <input type="radio" class="btn-check" name="purchase" id="one_time" autocomplete="off" checked>
+                    <input type="radio" class="btn-check" name="purchase" id="one_time" value="One-Time" autocomplete="off" checked>
                     <label class="btn btn-outline-dark" for="one_time">One-Time</label>
 
-                    <input type="radio" class="btn-check" name="purchase" id="subscription" autocomplete="off">
+                    <input type="radio" class="btn-check" name="purchase" id="subscription" value="Subscription" autocomplete="off">
                     <label class="btn btn-outline-dark" for="subscription">Subscription</label>
 
                 </div>
 
                 <div class="d-flex align-items-center gap-3">
-                    <input type="number" class="form-control" value="1" min="1" style="width: 80px;">
+                    <input type="number" name="quantity" class="form-control" value="1" min="1" style="width: 80px;">
                     <button type="submit" class="btn btn-dark btn-lg flex-grow-1">ADD TO CART</button>
                 </div>
             </form>
