@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView
-from .models import Product, Category
+from .models import Product, Category, Cart, CartItem
 
 class ProductListView(ListView):
     model = Product
@@ -20,7 +20,42 @@ def add_to_cart(request, product_id):
         purchase_option = request.POST.get('purchase')
         quantity = int(request.POST.get('quantity', 1))
 
-        print(f"test: {product.name}, {quantity}x, size:{size}, grind:{grind}, purchase:{purchase_option}")
+        if request.user.is_authenticated:
+            cart, created = Cart.objects.get_or_create(user = request.user)
+
+            cart_item, item_created = CartItem.objects.get_or_create(
+                cart = cart,
+                product = product,
+                size = size,
+                grind = grind,
+                purchase_option = purchase_option
+            )
+            if not item_created:
+                cart_item.quantity += quantity
+            else:
+                cart_item.quantity = quantity
+            cart_item.save()
+
+        else:
+            cart_session = request.session.get('cart')
+            if cart_session is None:
+                cart_session = {}
+
+            item_key = f"{product_id}_{size}_{grind}_{purchase_option}"
+
+            if item_key in cart_session:
+                cart_session[item_key]['quantity'] += quantity
+            else:
+                cart_session[item_key] = {
+                    'product_id': product_id,
+                    'size': size,
+                    'grind': grind,
+                    'purchase_option': purchase_option,
+                    'quantity': quantity
+                }
+
+            request.session['cart'] = cart_session
+            request.session.modified = True
 
         return redirect('product_list')
 

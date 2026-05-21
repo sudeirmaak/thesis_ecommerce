@@ -45,6 +45,9 @@ class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
+    size = models.CharField(max_length=50, blank=True, null=True)
+    grind = models.CharField(max_length=50, blank=True, null=True)
+    purchase_option = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return f"{self.quantity}x {self.product.name} (Cart {self.cart.id})"
