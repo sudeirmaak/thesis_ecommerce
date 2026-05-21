@@ -20,7 +20,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <a class="navbar-brand" href="/"> 
+            <a class="navbar-brand" href="{% url 'product_list' %}"> 
                 <span class="d-block brand-main">DIBEK</span>
                 <span class="d-block brand-sub">Coffee & More</span>
             </a>
@@ -38,7 +38,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link fs-3 p-0 d-flex align-items-center gap-1" href="/cart">
+                        <a class="nav-link fs-3 p-0 d-flex align-items-center gap-1" href="{% url 'cart_summary' %}">
                             <i class="bi bi-cart"></i>
                             <span class="badge bg-dark rounded-pill" style="font-size: 1rem;">{{ cart_count|default:"0"}}</span> 
                         </a>

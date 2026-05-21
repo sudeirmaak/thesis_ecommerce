@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-5">
+    <h1>Shopping Cart</h1>
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Details</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart_items %}
+            <tr>
+                <td>
+                    <img src="{{ item.product.image.url }}"
+                    class="img-thumbnail"
+                    style="width: 80px;"
+                    alt="{{ item.product.name }}">
+                </td>
+                <td>
+                    <strong>{{ item.product.name }}</strong>
+                    <small>{{ item.size }} | {{ item.grind }}</small>
+                </td>
+                <td>
+                    {{ item.product.price }}
+                </td>
+                <td>
+                    {{ item.quantity }}
+                </td>
+                <td>
+                    {{ item.subtotal }}
+                </td>
+                <td>
+                    <a href="#" class="btn btn-sm btn-outline-danger">Remove</a>
+                </td>
+            </tr>
+
+            {% empty %}
+
+            <tr>
+                <td colspan="6" class="text-center py-5">
+                    Your Cart Is Empty.
+                    <a href="{% url 'product_list' %}" class="btn btn-sm btn-outline-secondary ms-2">Back to Shop</a>
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-end mt-4">
+        <div class="card p-3" style="min-width: 250px;">
+            <p class="mb-2 fs-5 fw-semibold">Grand Total: ${{ grand_total }}</p>
+            <a href="#" class="btn btn-dark btn-lg">Proceed to Checkout</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
