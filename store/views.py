@@ -61,3 +61,54 @@ def add_to_cart(request, product_id):
 
     return redirect('product_list')
 
+def cart_summary(request):
+    cart_items = []
+    grand_total = 0
+
+    if request.user.is_authenticated:
+        cart = Cart.objects.filter(user=request.user).first()
+
+        if cart:
+            items = cart.cartitem_set.all()
+
+            for item in items:
+                subtotal = item.quantity * item.product.price
+                grand_total += subtotal
+
+                item_data = {
+                    'product': item.product,
+                    'size': item.size,
+                    'grind': item.grind,
+                    'quantity': item.quantity,
+                    'purchase_option': item.purchase_option,
+                    'subtotal': subtotal
+                }
+
+                cart_items.append(item_data)
+
+    else:
+        cart_session = request.session.get('cart', {})
+
+        for key , item_data in cart_session.items():
+            product = get_object_or_404(Product, id= item_data['product_id'])
+
+            subtotal = item_data['quantity'] * product.price
+            grand_total += subtotal
+
+            new_item = {
+                    'product': product,
+                    'size': item_data['size'],
+                    'grind': item_data['grind'],
+                    'quantity': item_data['quantity'],
+                    'purchase_option': item_data['purchase_option'],
+                    'subtotal': subtotal
+                }
+            
+            cart_items.append(new_item)
+    
+    context = {
+        'cart_items': cart_items,
+        'grand_total': grand_total
+    }
+
+    return render(request, 'store/cart.html', context)
