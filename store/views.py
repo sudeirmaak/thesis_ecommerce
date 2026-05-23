@@ -127,3 +127,27 @@ def remove_from_cart(request, item_id):
             request.session.modified = True
     
     return redirect('cart_summary')
+
+def update_cart(request, item_id):
+    if request.method == 'POST':
+        try:
+            quantity = int(request.POST.get('quantity'))
+            if quantity < 1:
+                quantity = 1
+        except(ValueError, TypeError):
+            quantity = 1
+            
+        if request.user.is_authenticated:
+            item = CartItem.objects.filter(id=item_id, cart__user=request.user).first()
+            if item:
+                item.quantity = quantity
+                item.save()
+
+        else:
+            cart_session = request.session.get('cart', {})
+            if item_id in cart_session:
+                cart_session[item_id]['quantity'] = quantity
+                request.session['cart'] = cart_session
+                request.session.modified = True
+
+    return redirect('cart_summary')

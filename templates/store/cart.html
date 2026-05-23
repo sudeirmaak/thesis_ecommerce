@@ -32,7 +32,26 @@
                     {{ item.product.price }}
                 </td>
                 <td>
-                    {{ item.quantity }}
+                    <form action="{% url 'update_cart' item.item_id %}" method="POST">
+                        {% csrf_token %}
+                        <div class="input-group input-group-sm" style="width: 120px;">
+                            
+                            <button type="button" class="btn btn-outline-dark" 
+                                    onclick="this.nextElementSibling.stepDown(); this.form.submit();">
+                                <i class="bi bi-dash"></i>
+                            </button>
+
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" 
+                                class="form-control text-center" 
+                                onchange="this.form.submit();">
+
+                            <button type="button" class="btn btn-outline-dark" 
+                                    onclick="this.previousElementSibling.stepUp(); this.form.submit();">
+                                <i class="bi bi-plus"></i>
+                            </button>
+                            
+                        </div>
+                    </form>
                 </td>
                 <td>
                     {{ item.subtotal }}
