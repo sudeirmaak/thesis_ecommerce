@@ -81,7 +81,8 @@ def cart_summary(request):
                     'grind': item.grind,
                     'quantity': item.quantity,
                     'purchase_option': item.purchase_option,
-                    'subtotal': subtotal
+                    'subtotal': subtotal,
+                    'item_id': item.id
                 }
 
                 cart_items.append(item_data)
@@ -101,7 +102,8 @@ def cart_summary(request):
                     'grind': item_data['grind'],
                     'quantity': item_data['quantity'],
                     'purchase_option': item_data['purchase_option'],
-                    'subtotal': subtotal
+                    'subtotal': subtotal,
+                    'item_id': key
                 }
             
             cart_items.append(new_item)
@@ -112,3 +114,16 @@ def cart_summary(request):
     }
 
     return render(request, 'store/cart.html', context)
+
+def remove_from_cart(request, item_id):
+    if request.user.is_authenticated:
+        CartItem.objects.filter(id=item_id, cart__user=request.user).delete()
+    else:
+        cart_session = request.session.get('cart', {})
+        
+        if item_id in cart_session:
+            del cart_session[item_id]
+            request.session['cart'] = cart_session
+            request.session.modified = True
+    
+    return redirect('cart_summary')
