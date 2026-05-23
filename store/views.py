@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.views.generic import ListView, DetailView
 from .models import Product, Category, Cart, CartItem
 
@@ -57,7 +58,9 @@ def add_to_cart(request, product_id):
             request.session['cart'] = cart_session
             request.session.modified = True
 
-        return redirect('product_list')
+        messages.success(request, f"{product.name} was successfully added to your cart.")
+
+        return redirect('product_detail', slug=product.slug)
 
     return redirect('product_list')
 
@@ -126,6 +129,7 @@ def remove_from_cart(request, item_id):
             request.session['cart'] = cart_session
             request.session.modified = True
     
+    messages.warning(request, "Item removed from your cart.")
     return redirect('cart_summary')
 
 def update_cart(request, item_id):
