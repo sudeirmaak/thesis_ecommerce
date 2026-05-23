@@ -25,7 +25,9 @@
                     alt="{{ item.product.name }}">
                 </td>
                 <td>
-                    <strong>{{ item.product.name }}</strong>
+                    <a href="{% url 'product_detail' item.product.slug %}" class="text-decoration-none text-dark">
+                        <strong>{{ item.product.name }}</strong>
+                    </a>
                     <small>{{ item.size }} | {{ item.grind }}</small>
                 </td>
                 <td>
