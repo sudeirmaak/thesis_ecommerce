@@ -66,7 +66,7 @@ def add_to_cart(request, product_id):
 
 def cart_summary(request):
     cart_items = []
-    grand_total = 0
+    cart_subtotal = 0
 
     if request.user.is_authenticated:
         cart = Cart.objects.filter(user=request.user).first()
@@ -76,7 +76,7 @@ def cart_summary(request):
 
             for item in items:
                 subtotal = item.quantity * item.product.price
-                grand_total += subtotal
+                cart_subtotal += subtotal
 
                 item_data = {
                     'product': item.product,
@@ -97,7 +97,7 @@ def cart_summary(request):
             product = get_object_or_404(Product, id= item_data['product_id'])
 
             subtotal = item_data['quantity'] * product.price
-            grand_total += subtotal
+            cart_subtotal += subtotal
 
             new_item = {
                     'product': product,
@@ -111,8 +111,12 @@ def cart_summary(request):
             
             cart_items.append(new_item)
     
+    shipping_cost = 0
+    grand_total = cart_subtotal + shipping_cost
+
     context = {
         'cart_items': cart_items,
+        'cart_subtotal': cart_subtotal,
         'grand_total': grand_total
     }
 
