@@ -3,7 +3,7 @@ from django.views.generic import CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
 from store.models import Cart, CartItem, Product
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, CustomLoginForm
 
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
@@ -11,6 +11,8 @@ class SignUpView(CreateView):
     template_name = 'registration/register.html'
 
 class CustomLoginView(LoginView):
+    form_class = CustomLoginForm
+    
     def form_valid(self, form):
         response = super().form_valid(form)
         cart_session = self.request.session.get('cart', {})
