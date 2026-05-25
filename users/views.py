@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from django.views.generic import CreateView
+from django.views.generic import CreateView, TemplateView
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from store.models import Cart, CartItem, Product
 from .forms import CustomUserCreationForm, CustomLoginForm
 
@@ -42,3 +43,19 @@ class CustomLoginView(LoginView):
             self.request.session.modified = True
 
         return response
+    
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'users/profile.html'
+    login_url = 'users:login'
+
+class OrdersView(LoginRequiredMixin, TemplateView):
+    template_name = 'users/orders.html'
+    login_url = 'users:login'
+
+class SubscriptionsView(LoginRequiredMixin, TemplateView):
+    template_name = 'users/subscriptions.html'
+    login_url = 'users:login'
+
+class SettingsView(LoginRequiredMixin, TemplateView):
+    template_name = 'users/settings.html'
+    login_url = 'users:login'

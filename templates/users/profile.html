@@ -1,0 +1,24 @@
+{% extends 'users/profile_base.html' %}
+
+{% block profile_content %}
+<div class="card border-0 shadow-sm p-4">
+    <h4 class="mb-4">Account Details</h4>
+    <p class="text-muted">Welcome Back <strong>{{ user.username }}</strong>!</p>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label text-muted small text-uppercase fw-bold">Username</label>
+            <p class="fs-5">{{ user.username }}</p>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label text-muted small text-uppercase fw-bold">Email Address</label>
+            <p class="fs-5">{{ user.email }}</p>
+        </div>
+    </div>
+
+    <hr class="text-muted mb-4">
+
+    <a href="#" class="btn btn-dark px-4">Edit Details</a>
+</div>
+
+{% endblock %}

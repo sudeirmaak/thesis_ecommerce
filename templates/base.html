@@ -35,7 +35,7 @@
                     </li>
                     <li class="nav-item">
                         {% if user.is_authenticated %}
-                            <a class="nav-link fs-3 p-0 " href="{% url 'users:logout' %}" title="Logout">
+                            <a class="nav-link fs-3 p-0 " href="{% url 'users:profile' %}" title="Logout">
                                 <i class="bi bi-person"></i>
                             </a>
                         {% else %}

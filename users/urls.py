@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import SignUpView, CustomLoginView
+from .views import SignUpView, CustomLoginView, ProfileView, OrdersView, SubscriptionsView, SettingsView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import views as auth_views
 from .forms import CustomPasswordResetForm, CustomSetPasswordForm
@@ -10,6 +10,10 @@ urlpatterns = [
     path('register/', SignUpView.as_view(), name='register'),
     path('login/', CustomLoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
+    path('profile/', ProfileView.as_view(), name='profile'),
+    path('profile/orders/', OrdersView.as_view(), name='orders'),
+    path('profile/subscriptions/', SubscriptionsView.as_view(), name='subscriptions'),
+    path('profile/settings/', SettingsView.as_view(), name='settings'),
     path('password-reset/', auth_views.PasswordResetView.as_view(template_name='registration/password_reset_form.html', 
         success_url='/users/password-reset/done/', form_class=CustomPasswordResetForm), name='password_reset'),
     path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'), 
