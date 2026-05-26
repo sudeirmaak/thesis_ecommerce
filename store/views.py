@@ -236,7 +236,7 @@ class CheckoutView(LoginRequiredMixin, View):
             cart.cartitem_set.all().delete()
             messages.success(request, f"Thank you! Order #{order.id} had been placed successfully.")
 
-            return redirect('users:profile')
+            return redirect('order_success', order_id = order.id)
         
         context = {
             'form': form,
@@ -245,3 +245,12 @@ class CheckoutView(LoginRequiredMixin, View):
         }
 
         return render(request, 'store/checkout.html', context)
+    
+def order_success(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    context = {
+        'order': order
+    }
+
+    return render(request, 'store/order_success.html', context)
