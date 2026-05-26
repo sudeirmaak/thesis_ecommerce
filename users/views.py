@@ -3,7 +3,7 @@ from django.views.generic import CreateView, TemplateView
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from store.models import Cart, CartItem, Product
+from store.models import Cart, CartItem, Product, Order
 from .forms import CustomUserCreationForm, CustomLoginForm
 
 class SignUpView(CreateView):
@@ -51,6 +51,14 @@ class ProfileView(LoginRequiredMixin, TemplateView):
 class OrdersView(LoginRequiredMixin, TemplateView):
     template_name = 'users/orders.html'
     login_url = 'users:login'
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        context['orders'] = Order.objects.filter(user=self.request.user).order_by('-created_at')
+
+        return context
 
 class SubscriptionsView(LoginRequiredMixin, TemplateView):
     template_name = 'users/subscriptions.html'

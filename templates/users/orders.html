@@ -3,7 +3,57 @@
 {% block profile_content %}
 <div class="card border-0 shadow-sm p-4">
     <h4 class="mb-4">My Orders</h4>
-    <p class="text-muted">You haven't placed any orders yet.</p>
+    
+    {% if orders %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="py-3">Order #</th>
+                        <th scope="col" class="py-3">Date</th>
+                        <th scope="col" class="py-3">Shipping</th>
+                        <th scope="col" class="py-3">Total</th>
+                        <th scope="col" class="py-3">Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for order in orders %}
+                    <tr>
+                        <td class="fw-bold">#{{ order.id }}</td>
+                        <td>{{ order.created_at|date:"M d, Y" }}</td>
+                        <td class="text-capitalize">{{ order.shipping_method }}</td>
+                        <td class="fw-bold">${{ order.total_amount }}</td>
+                        <td>
+                            {% if order.status == 'P' %}
+                                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
+                            {% elif order.status == 'A' %}
+                                <span class="badge bg-primary px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
+                            {% elif order.status == 'S' %}
+                                <span class="badge bg-info text-dark px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
+                            {% elif order.status == 'D' %}
+                                <span class="badge bg-success px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
+                            {% else %}
+                                <span class="badge bg-danger px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-4">
+            <i class="bi bi-box-seam text-muted mb-3 d-block" style="font-size: 3rem;"></i>
+            <h6 class="fw-bold">No orders yet</h6>
+            <p class="text-muted small mb-3">When you place an order, you can view it here.</p>
+            <a href="{% url 'product_list' %}" class="btn btn-outline-dark btn-sm px-4">Start Shopping</a>
+        </div>
+    {% endif %}
+
 </div>
 
 {% endblock %}
