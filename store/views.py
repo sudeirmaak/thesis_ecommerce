@@ -5,6 +5,7 @@ from django.views.generic import ListView, DetailView
 from django.views import View
 from .models import Product, Category, Cart, CartItem, Order, OrderItem, Subscription
 from .forms import CheckoutForm
+from decimal import Decimal
 
 class ProductListView(ListView):
     model = Product
@@ -177,12 +178,17 @@ class CheckoutView(LoginRequiredMixin, View):
         for item in cart_items:
             total_price += item.product.price * item.quantity
 
+        default_shipping = Decimal('5.00')
+        grand_total = total_price + default_shipping
+
         form = CheckoutForm()
 
         context = {
             'form': form,
             'cart_items': cart_items,
-            'total_price': total_price
+            'total_price': total_price,
+            'shipping_cost': default_shipping,
+            'grand_total': grand_total
         }
 
         return render(request, 'store/checkout.html', context)
@@ -205,7 +211,15 @@ class CheckoutView(LoginRequiredMixin, View):
         if form.is_valid():
             order = form.save(commit=False)
             order.user = request.user
-            order.total_amount = total_price
+
+            if order.shipping_method == 'express':
+                order.shipping_cost = Decimal(15.00)
+            else:
+                order.shipping_cost = Decimal(5.00)
+
+            grand_total = total_price + order.shipping_cost
+
+            order.total_amount = grand_total
             order.save()
 
             for item in cart_items:

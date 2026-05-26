@@ -4,7 +4,7 @@ from .models import Order
 class CheckoutForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ('full_name', 'email', 'phone_number', 'country', 'city', 'street_address', 'postal_code')
+        fields = ('full_name', 'email', 'phone_number', 'country', 'city', 'street_address', 'postal_code', 'shipping_method')
 
         widgets = {
             'full_name': forms.TextInput(attrs={'placeholder': 'John White'}),
@@ -27,5 +27,7 @@ class CheckoutForm(forms.ModelForm):
             'postal_code': forms.TextInput(attrs={
                 'placeholder': '12-345',
                 'id': 'postal-mask'
-            })
+            }),
+
+            'shipping_method': forms.RadioSelect(attrs={'class': 'form-check-input'})
         }
