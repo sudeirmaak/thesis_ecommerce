@@ -1,50 +1,129 @@
 {% extends 'base.html' %}
 
 {% load crispy_forms_tags %}
+{% load static %} 
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/checkout.css' %}">
+{% endblock %}
 
 {% block content %}
 
 <div class="container py-4">
-    <h2 class="mb-4">Secure Checkout</h2>
-
     <div class="row">
-        <div class="col-md-7 mb-4">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4">
-                    <h4 class="mb-3">Shipping Details</h4>
+        <div class="col-md-8 mb-4">
+            <h2 class="mb-4">DIBEK
+                <span class="text-muted fs-5">Checkout</span>
+            </h2>
+            <form method="POST" action="{% url 'checkout' %}" id="checkout-form">
+                {% csrf_token %}
 
-                    <form method="POST" action="{% url 'checkout' %}">
-                        {% csrf_token %}
+                <div class="card shadow-sm border-dark mb-3" id="card-step-1">
+                    <div class="card-header bg-white border-bottom-0 py-3 step-header d-flex justify-content-between align-items-center" id="header-step-1" onclick="openStep(1)">
+                        <h4 class="mb-0">
+                            <span class="badge bg-dark rounded-circle" id="badge-1">1</span>
+                            Address
+                        </h4>
+                        <i class="bi bi-check-circle-fill text-success fs-4 d-none" id="check-1"></i>
+                    </div>
 
-                        {{ form|crispy }}
+                    <div class="card-body p-4 accordion-content active" id="content-step-1">
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.full_name|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
 
-                        <button type="submit" class="btn btn-success btn-lg w-100 mt-4">Place Order</button>
-                    </form>
+                                {{ form.email|as_crispy_field }}
 
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">{{ form.phone_number|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.country|as_crispy_field }}</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">{{ form.city|as_crispy_field }}</div>
+                            <div class="col-md-4">{{ form.postal_code|as_crispy_field }}</div>
+                            <div class="col-md-4">{{ form.street_address|as_crispy_field }}</div>
+                        </div>
+
+                        <button type="button" class="btn btn-dark btn-lg w-100 mt-3" onclick="goToStep2()">Continue to Shipping</button>
+                    </div>
                 </div>
-            </div>
+
+                <div class="card border-secondary mb-3" id="card-step-2">
+                    <div class="card-header bg-white border-bottom-0 py-3 step-header locked d-flex justify-content-between align-items-center" id="header-step-2" onclick="openStep(2)">
+                        <h4 class="mb-0">
+                            <span class="badge bg-dark rounded-circle" id="badge-2">2</span>
+                            Shipping Method
+                        </h4>
+                        <i class="bi bi-check-circle-fill text-success fs-4 d-none" id="check-2"></i>
+                    </div>
+
+                    <div class="card-body p-4 accordion-content" id="content-step-2">
+                        {{ form.shipping_method|as_crispy_field }}
+
+                         <button type="button" class="btn btn-dark btn-lg w-100 mt-3" onclick="goToStep3()">Continue to Payment</button>
+
+                    </div>
+                </div>
+
+                <div class="card border-secondary mb-3" id="card-step-3">
+                    <div class="card-header bg-white border-bottom-0 py-3 step-header locked d-flex justify-content-between align-items-center" id="header-step-3" onclick="openStep(3)">
+                        <h4 class="mb-0">
+                            <span class="badge bg-dark rounded-circle" id="badge-3">3</span>
+                            Payment
+                        </h4>
+                    </div>
+
+                    <div class="card-body p-4 accordion-content" id="content-step-3">
+                        <div class="bg-light border border-secondary rounded p-3 mb-4">
+                            <h6 class="fw-bold text-dark mb-1">
+                                <i class="bi bi-info-circle-fill text-primary me-2"></i>MVP Notice
+                            </h6>
+                            <p class="text-muted small mb-0 ms-4">
+                                This is a university project MVP. Payment processing is simulated. Cash on delivery or standard invoicing will be applied.
+                            </p>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-lg w-100 mt-3">Complete Order</button>
+
+                    </div>
+                </div>
+
+            </form>
         </div>
 
-        <div class="col-md-5">
-            <div class="card border-0 shadow-sm">
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 bg-light mt-5 position-sticky" style="top: 20px;">
                 <div class="card-body p-4">
-                    <h4 class="mb-3">Order Summary</h4>
-
+                    <h4 class="mb-4">Summary</h4>
+                    
                     {% for item in cart_items %}
-                    <div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
+                    <div class="d-flex justify-content-between mb-3 pb-3 border-bottom border-secondary">
                         <div>
-                            <strong>{{ item.product.name }}</strong><br>
-                            <small class="text-muted">
-                                {{ item.quantity }}x | {{ item.size }} | {{ item.grind }}
-                            </small>
+                            <h6 class="mb-0 fw-bold">{{ item.product.name }}</h6>
+                            <small class="text-muted d-block">{{ item.size }} | {{ item.grind }}</small>
+                            <small class="text-muted">Qty: {{ item.quantity }}</small>
                         </div>
-                        <span>${{ item.product.price }}</span>
+                        <span class="fw-bold">${{ item.product.price }}</span>
                     </div>
                     {% endfor %}
 
-                    <div class="d-flex justify-content-between mt-3">
-                        <h5 class="fw-bold">Total</h5>
-                        <h5 class="fw-bold text-success">${{ total_price }}</h5>
+                    <div class="d-flex justify-content-between mb-2 mt-4">
+                        <span class="text-muted">Subtotal</span>
+                        <span>$<span id="summary-subtotal">{{ total_price }}</span></span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3 border-bottom border-dark pb-3">
+                        <span class="text-muted">Shipping</span>
+                        <span>$<span id="summary-shipping">{{ shipping_cost }}</span></span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="fw-bold mb-0">Total</h4>
+                        <h4 class="fw-bold mb-0 text-success">$<span id="summary-grand-total">{{ grand_total }}</span></h4>
                     </div>
 
                 </div>
@@ -54,23 +133,89 @@
 </div>
 
 <script>
-
-    const phoneInput = document.getElementById('id_phone_number');
-    phoneInput.addEventListener('input', function (e) {
+    document.getElementById('id_phone_number').addEventListener('input', function (e) {
         this.value = this.value.replace(/[^0-9+\s]/g, '');
     });
-
+    
     const postalInput = document.getElementById('postal-mask');
-    postalInput.addEventListener('input', function (e) {
-        let rawValue = this.value.replace(/[^0-9]/g, '');
+    if (postalInput) {
+        postalInput.addEventListener('input', function (e) {
+            let rawValue = this.value.replace(/[^0-9]/g, '');
+            if (rawValue.length > 2) {
+                this.value = rawValue.substring(0, 2) + '-' + rawValue.substring(2, 5);
+            } else {
+                this.value = rawValue;
+            }
+        });
+    }
 
-        if (rawValue.length > 2) {
-            this.value = rawValue.substring(0, 2) + '-' + rawValue.substring(2, 5);
-        } else {
-            this.value = rawValue;
+    let highestUnlockedStep = 1;
+
+    function openStep(stepNumber) {
+        if (stepNumber > highestUnlockedStep) {
+            return; 
         }
-    });
 
+        const form = document.getElementById('checkout-form');
+
+        if (stepNumber > 1 && !form.checkValidity()) {
+            form.reportValidity();
+
+            highestUnlockedStep = 1;
+            document.getElementById('header-step-2').classList.add('locked');
+            document.getElementById('header-step-3').classList.add('locked');
+            document.getElementById('check-1').classList.add('d-none');
+            document.getElementById('check-2').classList.add('d-none');
+
+            stepNumber = 1;
+        }
+
+        document.getElementById('content-step-1').classList.remove('active');
+        document.getElementById('content-step-2').classList.remove('active');
+        document.getElementById('content-step-3').classList.remove('active');
+        
+        document.getElementById('content-step-' + stepNumber).classList.add('active');
+    }
+
+    function goToStep2() {
+        const form = document.getElementById('checkout-form');
+        if(!form.checkValidity()) {
+            form.reportValidity(); 
+            return;
+        }
+        
+        document.getElementById('check-1').classList.remove('d-none');
+        highestUnlockedStep = Math.max(highestUnlockedStep, 2);
+        
+        document.getElementById('header-step-2').classList.remove('locked');
+        
+        openStep(2);
+    }
+
+    function goToStep3() {
+        document.getElementById('check-2').classList.remove('d-none');
+        highestUnlockedStep = Math.max(highestUnlockedStep, 3);
+
+        document.getElementById('header-step-3').classList.remove('locked');
+        
+        openStep(3);
+    }
+
+    const shippingRadios = document.querySelectorAll('input[name="shipping_method"]');
+    shippingRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            let shippingCost = 5.00; 
+            if (this.value === 'express') {
+                shippingCost = 15.00;
+            }
+            
+            const subtotal = parseFloat(document.getElementById('summary-subtotal').innerText);
+            const newGrandTotal = subtotal + shippingCost;
+            
+            document.getElementById('summary-shipping').innerText = shippingCost.toFixed(2);
+            document.getElementById('summary-grand-total').innerText = newGrandTotal.toFixed(2);
+        });
+    });
 </script>
 
 {% endblock %}

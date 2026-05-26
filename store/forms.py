@@ -17,7 +17,9 @@ class CheckoutForm(forms.ModelForm):
             'phone_number': forms.TextInput(attrs={
                 'placeholder': '+48 123 456 789',
                 'pattern': r'^\+?[0-9\s]+$',
-                'title': 'Enter a valid phone number (e.g. +48 123 456 789)'
+                'title': 'Enter a valid phone number (e.g. +48 123 456 789)',
+                'minlength': '9',
+                'maxlength': '15'
             }),
 
             'city': forms.TextInput(attrs={'placeholder': 'Warsaw'}),

@@ -1,0 +1,40 @@
+.accordion-content {
+    display: none;
+    overflow: hidden;
+}
+
+.accordion-content.active {
+    display: block; 
+    animation: fadeDown 0.5s ease-in-out;
+}
+
+@keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.step-header { 
+    cursor: pointer; 
+    transition: all 0.2s ease;
+}
+
+.step-header.locked {
+    cursor: not-allowed;
+    background-color: #f8f9fa !important;
+    opacity: 0.6;  
+}
+
+.step-header.locked h4,
+
+.step-header.locked h5 {
+    color: #6c757d !important;
+}
+
+.step-header.locked .badge {
+    background-color: #6c757d !important;
+}
+
+.card-header {
+    border-bottom-left-radius: 5px !important;
+    border-bottom-right-radius: 5px !important;
+}
