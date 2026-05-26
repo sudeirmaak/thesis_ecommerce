@@ -234,7 +234,6 @@ class CheckoutView(LoginRequiredMixin, View):
                 )
 
             cart.cartitem_set.all().delete()
-            messages.success(request, f"Thank you! Order #{order.id} had been placed successfully.")
 
             return redirect('order_success', order_id = order.id)
         

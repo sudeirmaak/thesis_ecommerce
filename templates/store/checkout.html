@@ -109,7 +109,10 @@
                             <small class="text-muted d-block">{{ item.size }} | {{ item.grind }}</small>
                             <small class="text-muted">Qty: {{ item.quantity }}</small>
                         </div>
-                        <span class="fw-bold">${{ item.product.price }}</span>
+                        <div class="text-end">
+                            <span class="fw-bold">${{ item.get_subtotal }}</span>
+                            <small class="text-muted d-block" style="font-size: 0.8rem;">(${{ item.product.price }} each)</small>
+                        </div>
                     </div>
                     {% endfor %}
 

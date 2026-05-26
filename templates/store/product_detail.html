@@ -2,6 +2,14 @@
 {% block content %}
 
 <div class="container py-5">
+
+    <div class="mb-4">
+        <a href="{% url 'product_list' %}" class="text-decoration-none text-muted">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back to Shop
+        </a>
+    </div>
+
     <div class="row gx-5 align-items-center">
         <div class="col-md-6 mb-4">
             <img src="{{ product.image.url }}" class="img-fluid w-100 rounded shadow-sm">
