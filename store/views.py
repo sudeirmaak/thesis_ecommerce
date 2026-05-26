@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.views.generic import ListView, DetailView
-from .models import Product, Category, Cart, CartItem
+from django.views import View
+from .models import Product, Category, Cart, CartItem, Order, OrderItem, Subscription
+from .forms import CheckoutForm
 
 class ProductListView(ListView):
     model = Product
@@ -159,3 +162,72 @@ def update_cart(request, item_id):
                 request.session.modified = True
 
     return redirect('cart_summary')
+
+class CheckoutView(LoginRequiredMixin, View):
+    def get(self, request):
+        cart = Cart.objects.filter(user=request.user).first()
+
+        if not cart or not cart.cartitem_set.exists():
+            messages.error(request, "Your cart is empty. Please add an item before checking out.")
+            return redirect('cart_summary')
+        
+        total_price = 0
+        cart_items = cart.cartitem_set.all()
+
+        for item in cart_items:
+            total_price += item.product.price * item.quantity
+
+        form = CheckoutForm()
+
+        context = {
+            'form': form,
+            'cart_items': cart_items,
+            'total_price': total_price
+        }
+
+        return render(request, 'store/checkout.html', context)
+    
+    def post(self, request):
+        cart = Cart.objects.filter(user=request.user).first()
+
+        if not cart or not cart.cartitem_set.exists():
+            messages.error(request, "Your cart is empty. Please add an item before checking out.")
+            return redirect('cart_summary')
+        
+        total_price = 0
+        cart_items = cart.cartitem_set.all()
+
+        for item in cart_items:
+            total_price += item.product.price * item.quantity
+
+        form = CheckoutForm(request.POST)
+
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.user = request.user
+            order.total_amount = total_price
+            order.save()
+
+            for item in cart_items:
+                OrderItem.objects.create(
+                    order = order,
+                    product = item.product,
+                    price = item.product.price,
+                    quantity = item.quantity,
+                    size = item.size,
+                    grind = item.grind,
+                    purchase_option = item.purchase_option
+                )
+
+            cart.cartitem_set.all().delete()
+            messages.success(request, f"Thank you! Order #{order.id} had been placed successfully.")
+
+            return redirect('users:profile')
+        
+        context = {
+            'form': form,
+            'cart_items': cart_items,
+            'total_price': total_price
+        }
+
+        return render(request, 'store/checkout.html', context)

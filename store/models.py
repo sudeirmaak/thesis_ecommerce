@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django_countries.fields import CountryField
 
 STATUS_CHOICES_ORDER = [
     ("P", "Pending"),
@@ -69,10 +70,11 @@ class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     full_name = models.CharField(max_length=255)
     email = models.EmailField(max_length=255)
+    phone_number = models.CharField(max_length=20)
     street_address = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
     postal_code = models.CharField(max_length=255)
-    country = models.CharField(max_length=255)
+    country = CountryField(multiple=False)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES_ORDER, default="P")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -92,7 +94,7 @@ class OrderItem(models.Model):
     size = models.CharField(max_length=50, blank=True)
     grind = models.CharField(max_length=50, blank=True)
     purchase_option = models.CharField(max_length=50, blank=True)
-    
+
     def __str__(self):
         if self.product:
             return f"{self.quantity}x {self.product.name} (Order {self.order.id})"
