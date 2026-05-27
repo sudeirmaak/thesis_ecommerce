@@ -58,6 +58,18 @@
         </div>
     </nav>
 
+    <div class="bg-main-footer shadow-sm mb-4">
+        <div class="container">
+            <nav class="nav justify-content-center py-2 small fw-bold text-uppercase" style="letter-spacing: 1px;">
+                <a class="nav-link category-link {% if not request.GET.category %}active-link{% endif %} px-4" href="{% url 'product_list' %}">All</a>
+
+                {% for category in categories %}
+                    <a class="nav-link category-link {% if request.GET.category == category.slug %}active-link{% endif %} px-4" href="{% url 'product_list' %}?category={{ category.slug }}">{{ category.name }}</a>
+                {% endfor %}
+            </nav>
+        </div>
+    </div>
+
     {% if messages %}
         <div class="container mt-3">
             {% for message in messages %}

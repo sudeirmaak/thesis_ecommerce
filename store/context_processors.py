@@ -1,4 +1,4 @@
-from .models import Cart
+from .models import Cart, Category
 
 def cart_context(request):
     cart_count = 0
@@ -17,3 +17,8 @@ def cart_context(request):
             cart_count += item_data['quantity']
 
     return {'cart_count': cart_count}
+
+def global_categories(request):
+    return {
+        'categories': Category.objects.all()
+    }

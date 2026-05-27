@@ -178,3 +178,22 @@ input[type="number"] {
     appearance: textfield; 
     
 }
+
+/* navbar */
+
+.bg-main-footer {
+    background-color: #403C49 !important;
+}
+
+.category-link {
+    color: #f0ffce !important; 
+    transition: color 0.3s ease;
+}
+
+.category-link:hover {
+    color: #ffffff !important;
+}
+
+.category-link.active-link {
+    color: #ffffff !important; 
+}
