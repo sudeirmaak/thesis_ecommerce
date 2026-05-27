@@ -21,8 +21,12 @@
                 <tbody>
 
                     {% for order in orders %}
-                    <tr>
-                        <td class="fw-bold">#{{ order.id }}</td>
+                    <tr class="position-relative">
+                        <td class="fw-bold">
+                            <a href="{% url 'users:order_detail' order.id %}" class="text-dark text-decoration-none stretched-link">
+                                #{{ order.id }}
+                            </a>
+                        </td>
                         <td>{{ order.created_at|date:"M d, Y" }}</td>
                         <td class="text-capitalize">{{ order.shipping_method }}</td>
                         <td class="fw-bold">${{ order.total_amount }}</td>

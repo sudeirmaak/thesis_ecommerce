@@ -1,0 +1,101 @@
+{% extends 'users/profile_base.html' %}
+
+{% block profile_content %}
+
+<div class="card border-0 shadow-sm p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <div class="d-flex align-items-center">
+            <a href="{% url 'users:orders' %}" class="text-dark me-3 ">
+                <i class="bi bi-arrow-left fs-4"></i>
+            </a>
+            <h3>Order #{{ order.id }}</h3>
+        </div>
+
+        <div>
+        {% if order.status == 'P' %}
+            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
+        {% elif order.status == 'A' %}
+            <span class="badge bg-primary px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
+        {% elif order.status == 'S' %}
+            <span class="badge bg-info text-dark px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
+        {% elif order.status == 'D' %}
+            <span class="badge bg-success px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
+        {% else %}
+            <span class="badge bg-danger px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
+        {% endif %}
+        </div>
+
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <label class="text-muted small text-uppercase fw-bold">Date Placed</label>
+            <p class="mb-0">{{ order.created_at|date:"F j, Y" }}</p>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <label class="text-muted small text-uppercase fw-bold">Shipping Method</label>
+            <p class="mb-0">{{ order.shipping_method|title }}</p>
+        </div>
+
+        <div class="col-12">
+            <label class="text-muted small text-uppercase fw-bold">Shipping Address</label>
+            <p class="mb-0">
+                {{ order.first_name|title }} {{ order.last_name|title }}<br>
+                {{ order.street_address|title }}<br>
+                {{ order.city|title }}, {{ order.postal_code }}<br>
+
+                {% if order.country.code == 'US' %}
+                    USA
+                {% else %}
+                    {{ order.get_country_display }}
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <h5 class="fw-bold mb-3">Items Ordered</h5>
+    <div class="table-responsive border rounded mb-4">
+        <table class="table align-middle mb-0">
+
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-3 py-3">Product</th>
+                    <th class="py-3">Price</th>
+                    <th class="text-center py-3">Qty</th>
+                    <th class="pe-3 py-3 text-end">Subtotal</th>
+                </tr>
+            </thead>  
+            
+            <tbody>
+
+                {% for item in order.items.all %}
+                <tr>
+                    <td class="ps-3">
+                        <span class="fw-bold d-block fs-6">
+                            {% if item.product %}
+                                {{ item.product.name }}
+                            {% else %}
+                                Item No Longer Available
+                            {% endif %}
+                        </span>
+                        <small class="text-muted">{{ item.size }} | {{ item.grind }}</small>
+                    </td>
+                    <td>${{ item.price }}</td>
+                    <td class="text-center">{{ item.quantity }}</td>
+                    <td class="pe-3 text-end fw-bold">${{ item.get_cost }}</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded">
+        <h5 class="fw-bold mb-0">Grand Total</h5>
+        <h4 class="fw-bold mb-0 text-success">${{ order.total_amount }}</h4>
+    </div>
+
+</div>
+
+{% endblock %}

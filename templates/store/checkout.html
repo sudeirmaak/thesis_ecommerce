@@ -28,25 +28,23 @@
 
                     <div class="card-body p-4 accordion-content active" id="content-step-1">
                         <div class="row">
-                            <div class="col-md-6">
-                                {{ form.full_name|as_crispy_field }}
-                            </div>
-                            <div class="col-md-6">
-
-                                {{ form.email|as_crispy_field }}
-
-                            </div>
+                            <div class="col-md-6">{{ form.first_name|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.last_name|as_crispy_field }}</div>
                         </div>
 
                         <div class="row">
+                            <div class="col-md-6">{{ form.email|as_crispy_field }}</div>
                             <div class="col-md-6">{{ form.phone_number|as_crispy_field }}</div>
-                            <div class="col-md-6">{{ form.country|as_crispy_field }}</div>
                         </div>
 
                         <div class="row">
+                            <div class="col-md-4">{{ form.country|as_crispy_field }}</div>
                             <div class="col-md-4">{{ form.city|as_crispy_field }}</div>
                             <div class="col-md-4">{{ form.postal_code|as_crispy_field }}</div>
-                            <div class="col-md-4">{{ form.street_address|as_crispy_field }}</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">{{ form.street_address|as_crispy_field }}</div>
                         </div>
 
                         <button type="button" class="btn btn-dark btn-lg w-100 mt-3" onclick="goToStep2()">Continue to Shipping</button>

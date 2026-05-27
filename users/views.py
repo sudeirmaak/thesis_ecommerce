@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import CreateView, TemplateView
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
@@ -67,3 +67,19 @@ class SubscriptionsView(LoginRequiredMixin, TemplateView):
 class SettingsView(LoginRequiredMixin, TemplateView):
     template_name = 'users/settings.html'
     login_url = 'users:login'
+
+class OrderDetailView(LoginRequiredMixin, TemplateView):
+    template_name = 'users/order_detail.html'
+    login_url = 'users:login'
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        order_id = self.kwargs.get('order_id')
+
+        order = get_object_or_404(Order, id=order_id, user=self.request.user)
+
+        context['order'] = order
+
+        return context

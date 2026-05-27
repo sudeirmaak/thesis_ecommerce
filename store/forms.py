@@ -4,10 +4,12 @@ from .models import Order
 class CheckoutForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ('full_name', 'email', 'phone_number', 'country', 'city', 'street_address', 'postal_code', 'shipping_method')
+        fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'city', 'street_address', 'postal_code', 'shipping_method')
 
         widgets = {
-            'full_name': forms.TextInput(attrs={'placeholder': 'John White'}),
+            'fist_name': forms.TextInput(attrs={'placeholder': 'John'}),
+
+            'last_name': forms.TextInput(attrs={'placeholder': 'Smith'}),
 
             'email': forms.EmailInput(attrs={
                 'placeholder': 'you@example.com',
