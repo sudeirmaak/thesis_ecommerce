@@ -1,11 +1,28 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 from django.views import View
 from .models import Product, Category, Cart, CartItem, Order, OrderItem, Subscription
 from .forms import CheckoutForm
 from decimal import Decimal
+
+class HomeView(TemplateView):
+    template_name = 'store/home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['hero_top'] = Product.objects.filter(slug='sumatra-mandheling-dark').first()
+        context['single_origin'] = Product.objects.filter(category__slug='single-origin')
+        context['blends'] = Product.objects.filter(category__slug='blends')
+        context['decaf'] = Product.objects.filter(category__slug='decaf')
+        context['hero_bottom'] = Product.objects.filter(slug='baratza-encore-burr-grinder').first()
+        context['brewing_equipment'] = Product.objects.filter(category__slug='brewing-equipment')
+
+        return context
+
+     
 
 class ProductListView(ListView):
     model = Product

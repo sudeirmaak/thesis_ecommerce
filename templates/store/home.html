@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="container py-4 mb-4">
+    <div class="row align-items-stretch bg-light rounded-4 overflow-hidden shadow-sm">
+
+        <div class="col-md-6 hero-bg-green p-5 d-flex flex-column justify-content-center">
+
+            <h1 class="fw-bold display-5 mb-3">Freshly Roasted, <br>For the Best Mornings.</h1>
+            <p class="text-color fs-5 mb-3">Discover the rich, bold flavors of our signature roast.</p>
+
+            {% if hero_top %}
+                <a href="{% url 'product_detail' hero_top.slug %}" class="btn btn-color btn-lg px-5 rounded-pill align-self-start">Shop Now</a>
+            {% endif %}
+
+        </div>
+
+        <div class="col-md-6 p-0">
+
+            {% if hero_top and hero_top.image %}
+                <img src="{{ hero_top.image.url }}" class="img-fluid w-100" style="height: 450px; object-fit: cover;">
+            {% else %}
+                <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 450px;">
+                    <i class="bi bi-image text-white" style="font-size: 5rem;"></i>
+                </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+
+<div class="container mb-5 pb-5 border-bottom">
+    <div class="row align-items-center">
+
+        <div class="col-md-3 mb-4 mb-md-0 pe-4">
+            <h3 class="fw-bold">Single Origin</h3>
+            <p class="text-muted small">Explore unique beans from farms around the world.</p>
+            <a href="{% url 'product_list' %}?category=single-origin" class="btn btn-dark rounded-pill px-4">Shop All</a>
+        </div>
+
+        <div class="col-md-9 d-flex align-items-center gap-2">
+
+            <button class="btn btn-light rounded-circle shadow-sm flex-shrink-0"
+                onclick="scrollCarousel('scroll-single', -244)" style="width: 40px; height: 40px;">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+
+            <div id="scroll-single" class="d-flex gap-4 overflow-x-auto pb-3 hide-scrollbar flex-grow-1" style="scroll-behavior: smooth;">
+
+                {% for product in single_origin %}
+                <div class="card border-0 shadow-sm flex-shrink-0" style="width: 220px;">
+
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" style="height: 220px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-secondary rounded-top d-flex align-items-center justify-content-center" style="height: 220px;">
+                            <i class="bi bi-camera text-white fs-1"></i>
+                        </div>
+                    {% endif %}
+
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-1 text-truncate">{{ product.name }}</h6>
+                        <p class="fw-bold mb-0">${{ product.price }}</p>
+                    </div>
+
+                    <a href="{% url 'product_detail' product.slug %}" class="stretched-link"></a>
+
+                </div>
+
+                {% empty %}
+                    <p class="text-muted">No single origin coffees are available at the moment.</p>
+                {% endfor %}
+            </div>
+
+            <button class="btn btn-light rounded-circle shadow-sm flex-shrink-0"
+                onclick="scrollCarousel('scroll-single', 244)" style="width: 40px; height: 40px;">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5 pb-5 border-bottom">
+    <div class="row align-items-center">
+
+        <div class="col-md-3 mb-4 mb-md-0 pe-4">
+            <h3 class="fw-bold">Blends</h3>
+            <p class="text-muted small">Carefully balanced for the perfect brew.</p>
+            <a href="{% url 'product_list' %}?category=blends" class="btn btn-dark rounded-pill px-4">Shop All</a>
+        </div>
+
+        <div class="col-md-9 d-flex align-items-center gap-2">
+
+            <button class="btn btn-light rounded-circle shadow-sm flex-shrink-0"
+                onclick="scrollCarousel('scroll-blends', -244)" style="width: 40px; height: 40px;">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+
+            <div id="scroll-blends" class="d-flex gap-4 overflow-x-auto pb-3 hide-scrollbar flex-grow-1" style="scroll-behavior: smooth;">
+                {% for product in blends %}
+                <div class="card border-0 shadow-sm flex-shrink-0" style="width: 220px;">
+
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" style="height: 220px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-secondary rounded-top d-flex align-items-center justify-content-center" style="height: 220px;">
+                            <i class="bi bi-camera text-white fs-1"></i>
+                        </div>
+                    {% endif %}
+
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-1 text-truncate">{{ product.name }}</h6>
+                        <p class="fw-bold mb-0">${{ product.price }}</p>
+                    </div>
+
+                    <a href="{% url 'product_detail' product.slug %}" class="stretched-link"></a>
+
+                </div>
+
+                {% empty %}
+                    <p class="text-muted">No blend coffees are available at the moment.</p>
+                {% endfor %}
+            </div>
+
+            <button class="btn btn-light rounded-circle shadow-sm flex-shrink-0"
+                onclick="scrollCarousel('scroll-blends', 244)" style="width: 40px; height: 40px;">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+
+        </div>
+    </div>
+</div>
+
+<div class="container mb-5 pb-5 border-bottom">
+    <div class="row align-items-center">
+
+        <div class="col-md-3 mb-4 mb-md-0 pe-4">
+            <h3 class="fw-bold">Decaf</h3>
+            <p class="text-muted small">All the flavor, none of the caffeine.</p>
+            <a href="{% url 'product_list' %}?category=decaf" class="btn btn-dark rounded-pill px-4">Shop All</a>
+        </div>
+
+        <div class="col-md-9 d-flex align-items-center gap-2">
+
+            <button class="btn btn-light rounded-circle shadow-sm flex-shrink-0"
+                onclick="scrollCarousel('scroll-decaf', -244)" style="width: 40px; height: 40px;">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+
+            <div id="scroll-decaf" class="d-flex gap-4 overflow-x-auto pb-3 hide-scrollbar flex-grow-1" style="scroll-behavior: smooth;">
+                {% for product in decaf %}
+                <div class="card border-0 shadow-sm flex-shrink-0" style="width: 220px;">
+
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" style="height: 220px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-secondary rounded-top d-flex align-items-center justify-content-center" style="height: 220px;">
+                            <i class="bi bi-camera text-white fs-1"></i>
+                        </div>
+                    {% endif %}
+
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-1 text-truncate">{{ product.name }}</h6>
+                        <p class="fw-bold mb-0">${{ product.price }}</p>
+                    </div>
+
+                    <a href="{% url 'product_detail' product.slug %}" class="stretched-link"></a>
+
+                </div>
+
+                {% empty %}
+                    <p class="text-muted">No decaf coffees are available at the moment.</p>
+                {% endfor %}
+            </div>
+
+            <button class="btn btn-light rounded-circle shadow-sm flex-shrink-0"
+                onclick="scrollCarousel('scroll-decaf', 244)" style="width: 40px; height: 40px;">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+
+        </div>
+    </div>
+</div>
+
+<div class="container py-4 mb-4">
+    <div class="row align-items-stretch bg-light rounded-4 overflow-hidden shadow-sm">
+
+        <div class="col-md-6 hero-bg-green p-5 d-flex flex-column justify-content-center">
+
+            <h1 class="fw-bold display-5 mb-3">Brew Like a Barista</h1>
+            <p class="text-color fs-5 mb-3">Elevate your everday coffee with a professional touch.</p>
+
+            {% if hero_bottom %}
+                <a href="{% url 'product_detail' hero_bottom.slug %}" class="btn btn-color btn-lg px-5 rounded-pill align-self-start">Shop Now</a>
+            {% endif %}
+
+        </div>
+
+        <div class="col-md-6 p-0">
+
+            {% if hero_bottom and hero_bottom.image %}
+                <img src="{{ hero_bottom.image.url }}" class="img-fluid w-100" style="height: 450px; object-fit: cover;">
+            {% else %}
+                <div class="bg-secondary d-flex align-items-center justify-content-center" style="height: 450px;">
+                    <i class="bi bi-image text-white" style="font-size: 5rem;"></i>
+                </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+
+<div class="container mb-5 pb-5 border-bottom">
+    <div class="row align-items-center">
+
+        <div class="col-md-3 mb-4 mb-md-0 pe-4">
+            <h3 class="fw-bold">Brewing Gear</h3>
+            <p class="text-muted small">Everything you need for the perfect cup of coffee.</p>
+            <a href="{% url 'product_list' %}?category=brewing-equipment" class="btn btn-dark rounded-pill px-4">Shop All</a>
+        </div>
+
+        <div class="col-md-9 d-flex align-items-center gap-2">
+            
+            <button class="btn btn-light rounded-circle shadow-sm flex-shrink-0"
+                onclick="scrollCarousel('scroll-brewing-equipment', -244)" style="width: 40px; height: 40px;">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+
+            <div id="scroll-brewing-equipment" class="d-flex gap-4 overflow-x-auto pb-3 hide-scrollbar flex-grow-1" style="scroll-behavior: smooth;">
+
+                {% for product in brewing_equipment %}
+                <div class="card border-0 shadow-sm flex-shrink-0" style="width: 220px;">
+
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="card-img-top" style="height: 220px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-secondary rounded-top d-flex align-items-center justify-content-center" style="height: 220px;">
+                            <i class="bi bi-camera text-white fs-1"></i>
+                        </div>
+                    {% endif %}
+
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-1 text-truncate">{{ product.name }}</h6>
+                        <p class="fw-bold mb-0">${{ product.price }}</p>
+                    </div>
+
+                    <a href="{% url 'product_detail' product.slug %}" class="stretched-link"></a>
+
+                </div>
+
+                {% empty %}
+                    <p class="text-muted">No brewing gears are available at the moment.</p>
+                {% endfor %}
+            </div>
+
+            <button class="btn btn-light rounded-circle shadow-sm flex-shrink-0"
+                onclick="scrollCarousel('scroll-brewing-equipment', 244)" style="width: 40px; height: 40px;">
+                <i class="bi bi-chevron-right"></i>
+            </button>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function scrollCarousel(containerId, scrollAmount) {
+        const container = document.getElementById(containerId);
+        if (container) {
+            container.scrollBy({
+                left: scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+    }
+</script>
+
+{% endblock %}

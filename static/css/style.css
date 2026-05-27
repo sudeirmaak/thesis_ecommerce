@@ -197,3 +197,35 @@ input[type="number"] {
 .category-link.active-link {
     color: #ffffff !important; 
 }
+
+/* home */
+
+.hero-bg-green {
+    background-color: #45493C !important;
+    color: #FFF4E8 !important;
+}
+
+.text-color {
+    color: #FFF4E8 !important;
+}
+
+.btn-color {
+    background-color: #FFF4E8 !important;
+    color: #403C49 !important; 
+    border: none;
+    transition: 0.3s ease;
+}
+
+.btn-color-hover {
+    background-color: #e3d7b7 !important;
+    color: #000 !important;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none; 
+    scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
