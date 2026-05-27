@@ -28,35 +28,43 @@
             <form action="{% url 'add_to_cart' product.id %}" method="POST">
                 {% csrf_token %}
 
-                <label class="fw-bold mb-2">Size:</label>
-                <div class="btn-group w-100 mb-4">
-                    <input type="radio" class="btn-check" name="size" id="size_250" value="250g" autocomplete="off" checked>
-                    <label class="btn btn-outline-dark" for="size_250">250g</label>
+                {% if product.category.slug != 'brewing-equipment' %}
+                    <label class="fw-bold mb-2">Size:</label>
+                    <div class="btn-group w-100 mb-4">
+                        <input type="radio" class="btn-check" name="size" id="size_250" value="250g" autocomplete="off" checked>
+                        <label class="btn btn-outline-dark" for="size_250">250g</label>
 
-                    <input type="radio" class="btn-check" name="size" id="size_500" value="500g" autocomplete="off">
-                    <label class="btn btn-outline-dark" for="size_500">500g</label>
+                        <input type="radio" class="btn-check" name="size" id="size_500" value="500g" autocomplete="off">
+                        <label class="btn btn-outline-dark" for="size_500">500g</label>
 
-                    <input type="radio" class="btn-check" name="size" id="size_1kg" value="1kg" autocomplete="off">
-                    <label class="btn btn-outline-dark" for="size_1kg">1kg</label>
-                </div>
+                        <input type="radio" class="btn-check" name="size" id="size_1kg" value="1kg" autocomplete="off">
+                        <label class="btn btn-outline-dark" for="size_1kg">1kg</label>
+                    </div>
 
-                <label class="fw-bold mb-2">Grind:</label>
-                <select name="grind" class="form-select mb-4 border-dark">
-                    <option value="Whole Bean">Whole Bean</option>
-                    <option value="Espresso">Espresso</option>
-                    <option value="Filter">Filter</option>
-                </select>
+                    <label class="fw-bold mb-2">Grind:</label>
+                    <select name="grind" class="form-select mb-4 border-dark">
+                        <option value="Whole Bean">Whole Bean</option>
+                        <option value="Espresso">Espresso</option>
+                        <option value="Filter">Filter</option>
+                    </select>
 
-                <label class="fw-bold mb-2">Purchase Option:</label>
-                <div class="btn-group w-100 mb-4">
-                    <input type="radio" class="btn-check" name="purchase" id="one_time" value="One-Time" autocomplete="off" checked>
-                    <label class="btn btn-outline-dark" for="one_time">One-Time</label>
+                    <label class="fw-bold mb-2">Purchase Option:</label>
+                    <div class="btn-group w-100 mb-4">
+                        <input type="radio" class="btn-check" name="purchase" id="one_time" value="One-Time" autocomplete="off" checked>
+                        <label class="btn btn-outline-dark" for="one_time">One-Time</label>
 
-                    <input type="radio" class="btn-check" name="purchase" id="subscription" value="Subscription" autocomplete="off">
-                    <label class="btn btn-outline-dark" for="subscription">Subscription</label>
-                </div>
+                        <input type="radio" class="btn-check" name="purchase" id="subscription" value="Subscription" autocomplete="off">
+                        <label class="btn btn-outline-dark" for="subscription">Subscription</label>
+                    </div>
 
-                <div class="d-flex align-items-stretch gap-3 mt-2">
+                {% else %}
+                    <input type="hidden" name="size" value="">
+                    <input type="hidden" name="grind" value="">
+                    <input type="hidden" name="purchase" value="One-Time">
+
+                {% endif %}
+
+                <div class="d-flex align-items-stretch gap-3 mt-4">
                     <div class="input-group" style="width: 140px;">
                         <button class="btn btn-outline-dark" type="button" onclick="this.nextElementSibling.stepDown();">
                             <i class="bi bi-dash"></i>

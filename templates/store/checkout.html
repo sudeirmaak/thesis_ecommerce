@@ -108,7 +108,11 @@
                     <div class="d-flex justify-content-between mb-3 pb-3 border-bottom border-secondary">
                         <div>
                             <h6 class="mb-0 fw-bold">{{ item.product.name }}</h6>
-                            <small class="text-muted d-block">{{ item.size }} | {{ item.grind }}</small>
+
+                            {% if item.size %}
+                                <small class="text-muted d-block">{{ item.size }} | {{ item.grind }}</small>
+                            {% endif %}
+                            
                             <small class="text-muted">Qty: {{ item.quantity }}</small>
                         </div>
                         <div class="text-end">

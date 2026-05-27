@@ -79,7 +79,11 @@
                                 Item No Longer Available
                             {% endif %}
                         </span>
-                        <small class="text-muted">{{ item.size }} | {{ item.grind }}</small>
+
+                        {% if item.size %}
+                            <small class="text-muted">{{ item.size }} | {{ item.grind }}</small>
+                        {% endif %}
+                        
                     </td>
                     <td>${{ item.price }}</td>
                     <td class="text-center">{{ item.quantity }}</td>

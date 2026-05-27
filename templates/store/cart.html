@@ -37,7 +37,11 @@
                                             <a href="{% url 'product_detail' item.product.slug %}" class="text-decoration-none text-dark d-block">
                                                 <strong>{{ item.product.name }}</strong>
                                             </a>
-                                            <small class="text-muted d-block mt-1">{{ item.size }} | {{ item.grind }}</small>
+
+                                            {% if item.size %}
+                                                <small class="text-muted d-block mt-1">{{ item.size }} | {{ item.grind }}</small>
+                                            {% endif %}
+
                                         </div>
                                     </div>
                                 </td>
