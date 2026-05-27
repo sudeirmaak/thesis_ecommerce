@@ -7,7 +7,7 @@ class CheckoutForm(forms.ModelForm):
         fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'city', 'street_address', 'postal_code', 'shipping_method')
 
         widgets = {
-            'fist_name': forms.TextInput(attrs={'placeholder': 'John'}),
+            'first_name': forms.TextInput(attrs={'placeholder': 'John'}),
 
             'last_name': forms.TextInput(attrs={'placeholder': 'Smith'}),
 

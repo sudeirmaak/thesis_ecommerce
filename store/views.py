@@ -79,7 +79,7 @@ def cart_summary(request):
             items = cart.cartitem_set.all()
 
             for item in items:
-                subtotal = item.quantity * item.product.price
+                subtotal = item.get_subtotal()
                 cart_subtotal += subtotal
 
                 item_data = {
@@ -88,6 +88,7 @@ def cart_summary(request):
                     'grind': item.grind,
                     'quantity': item.quantity,
                     'purchase_option': item.purchase_option,
+                    'unit_price': item.get_unit_price(),
                     'subtotal': subtotal,
                     'item_id': item.id
                 }
@@ -100,8 +101,8 @@ def cart_summary(request):
         for key , item_data in cart_session.items():
             product = get_object_or_404(Product, id= item_data['product_id'])
 
-            subtotal = item_data['quantity'] * product.price
-            cart_subtotal += subtotal
+            size_price = product.get_size_price(item_data['size'])
+            subtotal = item_data['quantity'] * size_price
 
             new_item = {
                     'product': product,
@@ -109,6 +110,7 @@ def cart_summary(request):
                     'grind': item_data['grind'],
                     'quantity': item_data['quantity'],
                     'purchase_option': item_data['purchase_option'],
+                    'unit_price': size_price,
                     'subtotal': subtotal,
                     'item_id': key
                 }
@@ -176,7 +178,7 @@ class CheckoutView(LoginRequiredMixin, View):
         cart_items = cart.cartitem_set.all()
 
         for item in cart_items:
-            total_price += item.product.price * item.quantity
+            total_price += item.get_unit_price() * item.quantity
 
         default_shipping = Decimal('5.00')
         grand_total = total_price + default_shipping
@@ -204,7 +206,7 @@ class CheckoutView(LoginRequiredMixin, View):
         cart_items = cart.cartitem_set.all()
 
         for item in cart_items:
-            total_price += item.product.price * item.quantity
+            total_price += item.get_unit_price() * item.quantity
 
         form = CheckoutForm(request.POST)
 
@@ -226,7 +228,7 @@ class CheckoutView(LoginRequiredMixin, View):
                 OrderItem.objects.create(
                     order = order,
                     product = item.product,
-                    price = item.product.price,
+                    price = item.get_unit_price(),
                     quantity = item.quantity,
                     size = item.size,
                     grind = item.grind,

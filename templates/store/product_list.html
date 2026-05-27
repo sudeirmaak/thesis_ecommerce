@@ -7,7 +7,15 @@
         {% for product in products %}
         <div class="col-md-4 mb-4">
             <div class="card h-100 border-0 shadow-sm">
-                <img class="card-img-top" src="{{ product.image.url }}" style="object-fit: cover; height: 350px;">
+
+                {% if product.image %}
+                    <img class="card-img-top" src="{{ product.image.url }}" style="object-fit: cover; height: 350px;">
+                {% else %}
+                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center text-white" style="height: 350px;">
+                        <i class="bi bi-camera bg-secondary" style="font-size: 3rem;"></i>
+                    </div>
+                {% endif %} 
+                
                 <div class="card-body text-center">
                     <h5>{{ product.name }}</h5>
                     <p>{{ product.category.name }}</p>

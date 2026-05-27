@@ -12,7 +12,12 @@
 <div class="container py-4">
     <div class="row">
         <div class="col-md-8 mb-4">
-            <h2 class="mb-4">Checkout</h2>
+            <div class="d-flex align-items-center mb-4">
+                <a href="{% url 'cart_summary' %}" class="text-dark me-3">
+                    <i class="bi bi-arrow-left fs-3"></i>
+                </a>
+                <h2 class="mb-0">Checkout</h2>
+            </div>
             
             <form method="POST" action="{% url 'checkout' %}" id="checkout-form">
                 {% csrf_token %}
@@ -108,7 +113,7 @@
                         </div>
                         <div class="text-end">
                             <span class="fw-bold">${{ item.get_subtotal }}</span>
-                            <small class="text-muted d-block" style="font-size: 0.8rem;">(${{ item.product.price }} each)</small>
+                            <small class="text-muted d-block" style="font-size: 0.8rem;">(${{ item.get_unit_price }} each)</small>
                         </div>
                     </div>
                     {% endfor %}

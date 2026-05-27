@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django_countries.fields import CountryField
+from decimal import Decimal
 
 STATUS_CHOICES_ORDER = [
     ("P", "Pending"),
@@ -51,6 +52,16 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def get_size_price(self, size):
+        size_price = self.price
+
+        if size == '500g':
+            size_price = self.price * Decimal('1.8')
+        elif size == '1kg':
+            size_price = self.price * Decimal('3.5')
+
+        return round(size_price, 2)
 
 class Cart(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -71,8 +82,11 @@ class CartItem(models.Model):
     def __str__(self):
         return f"{self.quantity}x {self.product.name} (Cart {self.cart.id})"
     
+    def get_unit_price(self):
+        return self.product.get_size_price(self.size)
+    
     def get_subtotal(self):
-        return self.product.price * self.quantity
+        return self.get_unit_price() * self.quantity
 
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
