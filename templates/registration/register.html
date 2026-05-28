@@ -21,11 +21,24 @@
 
                     {% for field in form %}
                     <div class="mb-3 text-start">
+
                         <label class="form-label fw-bold">{{ field.label }}</label>
-                        {{ field }}
+
+                        {% if 'password' in field.name|lower %}
+                            <div class="input-group">
+                                {{ field }}
+                                <button class="btn btn-outline-secondary border-start-0" type="button" onclick="togglePassword(this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
+
                         {% if field.errors %}
                             <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
                         {% endif %}
+                        
                     </div>
                     {% endfor %}
 
@@ -40,5 +53,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    function togglePassword(button) {
+        const input = button.previousElementSibling;
+        const icon = button.querySelector('i');
+
+        if (input.type == 'password') {
+            input.type = 'text';
+            icon.classList.replace('bi-eye', 'bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('bi-eye-slash', 'bi-eye');
+        }
+    }
+</script>
 
 {% endblock %}

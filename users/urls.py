@@ -17,6 +17,10 @@ urlpatterns = [
     path('profile/subscriptions/', views.SubscriptionsView.as_view(), name='subscriptions'),
     path('profile/settings/', views.SettingsView.as_view(), name='settings'),
 
+    path('profile/addresses/add/', views.AddAddressView.as_view(), name='add_address'),
+    path('profile/addresses/<int:address_id>/delete/', views.delete_address, name='delete_address'),
+    path('profile/addresses/<int:address_id>/set-default/', views.set_default_address, name='set_default_address'),
+
     path('password-reset/', auth_views.PasswordResetView.as_view(
         template_name='registration/password_reset_form.html', 
         email_template_name='registration/password_reset_email.html',

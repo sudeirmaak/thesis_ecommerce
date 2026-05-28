@@ -1,6 +1,7 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordResetForm, SetPasswordForm
 from django.contrib.auth import get_user_model
 from django import forms
+from .models import Address
 import re
 
 class CustomUserCreationForm(UserCreationForm):
@@ -67,3 +68,17 @@ class CustomUserUpdateForm(forms.ModelForm):
                 raise forms.ValidationError("Please enter a valid phone number.")
             
         return phone
+    
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        fields = ('name', 'first_name', 'last_name', 'phone_number', 'street_address', 'city', 'postal_code', 'country', 'is_default')
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            for field_name, field in self.fields.items():
+                if field_name == 'is_default':
+                    field.widget.attrs['class'] = 'form-check'
+                else:
+                    field.widget.attrs['class'] = 'form-control'
