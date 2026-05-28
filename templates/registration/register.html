@@ -5,7 +5,9 @@
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-6">
-            <div class="card shadow-sm border-0 p-4"><h3 class="text-center mb-4 brand-main fs-2">Create Account</h3>
+            <div class="card shadow-sm border-0 p-4">
+                <h3 class="text-center mb-4 brand-main fs-2">Create Account</h3>
+                
                 <form method="POST">
                     {% csrf_token %}
 
@@ -29,7 +31,7 @@
 
                     <button type="submit" class="btn btn-dark w-100 mt-3">Sign Up</button>
                     <div class="text-center mt-3">
-                        <p>Already have and account? 
+                        <p>Already have an account? 
                             <a href="{% url 'users:login' %}" class="text-decoration-none text-dark fw-bold">Log in here</a>
                         </p>
                     </div>

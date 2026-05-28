@@ -146,7 +146,8 @@
         this.value = this.value.replace(/[^0-9+\s]/g, '');
     });
     
-    const postalInput = document.getElementById('postal-mask');
+    const postalInput = document.getElementById('id_postal-mask');
+
     if (postalInput) {
         postalInput.addEventListener('input', function (e) {
             let rawValue = this.value.replace(/[^0-9]/g, '');

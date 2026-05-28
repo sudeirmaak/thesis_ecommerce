@@ -133,7 +133,7 @@ class Subscription(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     original_order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
-    status = models.CharField(max_length=1, choices=STATUS_CHOICES_SUBSCRIPTION, default="P")
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES_SUBSCRIPTION, default="A")
     frequency = models.CharField(max_length=1, choices=FREQUENCY_CHOICES_SUBSCRIPTION, default="W")
     next_delivery_date = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -22,8 +22,6 @@ class HomeView(TemplateView):
 
         return context
 
-     
-
 class ProductListView(ListView):
     model = Product
     template_name = 'store/product_list.html'

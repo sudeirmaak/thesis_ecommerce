@@ -90,7 +90,7 @@ class SettingsView(LoginRequiredMixin, UpdateView):
             messages.success(self.request, "Your personal details have been successfully updated!")
             return super().form_valid(form)
         else:
-            messages.info(self.request, "No changes were made to you personal details.")
+            messages.info(self.request, "No changes were made to your personal details.")
             return HttpResponseRedirect(self.get_success_url())
 
 class OrderDetailView(LoginRequiredMixin, TemplateView):
