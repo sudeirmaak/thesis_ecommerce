@@ -1,15 +1,26 @@
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, TemplateView, UpdateView
 from django.urls import reverse_lazy
+from django.contrib.auth import login
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 from store.models import Cart, CartItem, Product, Order
-from .forms import CustomUserCreationForm, CustomLoginForm
+from .forms import CustomUserCreationForm, CustomLoginForm, CustomUserUpdateForm
 
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
-    success_url = reverse_lazy('users:login')
+    success_url = reverse_lazy('home')
     template_name = 'registration/register.html'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+        login(self.request, self.object)
+
+        return response
 
 class CustomLoginView(LoginView):
     form_class = CustomLoginForm
@@ -64,9 +75,23 @@ class SubscriptionsView(LoginRequiredMixin, TemplateView):
     template_name = 'users/subscriptions.html'
     login_url = 'users:login'
 
-class SettingsView(LoginRequiredMixin, TemplateView):
+class SettingsView(LoginRequiredMixin, UpdateView):
     template_name = 'users/settings.html'
     login_url = 'users:login'
+    form_class = CustomUserUpdateForm
+    success_url = reverse_lazy('users:settings')
+
+    def get_object(self):
+        return self.request.user
+    
+    def form_valid(self, form):
+
+        if form.has_changed():
+            messages.success(self.request, "Your personal details have been successfully updated!")
+            return super().form_valid(form)
+        else:
+            messages.info(self.request, "No changes were made to you personal details.")
+            return HttpResponseRedirect(self.get_success_url())
 
 class OrderDetailView(LoginRequiredMixin, TemplateView):
     template_name = 'users/order_detail.html'

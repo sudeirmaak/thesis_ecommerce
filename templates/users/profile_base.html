@@ -17,7 +17,7 @@
                 </a>
 
                 <a href="{% url 'users:orders' %}" class="list-group-item list-group-item-action
-                    {% if request.resolver_match.url_name == 'orders' %} active bg-dark border-dark text-white {% endif %}">
+                    {% if request.resolver_match.url_name == 'orders' or request.resolver_match.url_name == 'order_detail' %} active bg-dark border-dark text-white {% endif %}">
                     My Orders
                 </a>
 
