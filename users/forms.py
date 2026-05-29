@@ -55,7 +55,12 @@ class CustomUserUpdateForm(forms.ModelForm):
         self.fields['phone_number'].required = True
 
         for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-control'
+            if field_name == 'email':
+                field.widget.attrs.update({'class': 'form-control border-secondary p-2', 'list': 'email-suggestions'})
+            elif field_name == 'phone_number':
+                field.widget.attrs.update({'class': 'form-control border-secondary py-2 phone-mask'})
+            else:
+                field.widget.attrs['class'] = 'form-control border-secondary p-2'
 
     def clean_phone_number(self):
         phone = self.cleaned_data.get('phone_number')
@@ -74,11 +79,15 @@ class AddressForm(forms.ModelForm):
         model = Address
         fields = ('name', 'first_name', 'last_name', 'phone_number', 'street_address', 'city', 'postal_code', 'country', 'is_default')
 
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-            for field_name, field in self.fields.items():
-                if field_name == 'is_default':
-                    field.widget.attrs['class'] = 'form-check'
-                else:
-                    field.widget.attrs['class'] = 'form-control'
+        for field_name, field in self.fields.items():
+            if field_name == 'is_default':
+                field.widget.attrs['class'] = 'form-check-input border-secondary'
+            elif field_name == 'postal_code':
+                field.widget.attrs.update({'class': 'form-control border-secondary p-2 postal-mask', 'placeholder': '12-345'})
+            elif field_name == 'phone_number':
+                field.widget.attrs.update({'class': 'form-control border-secondary py-2 phone-mask'})
+            else:
+                field.widget.attrs['class'] = 'form-control border-secondary p-2'

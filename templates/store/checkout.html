@@ -22,6 +22,38 @@
             <form method="POST" action="{% url 'checkout' %}" id="checkout-form">
                 {% csrf_token %}
 
+                {% if user_addresses %}
+                <div class="mb-4">
+                    <h5 class="fw-bold mb-3">Saved Addresses</h5>
+                    <div class="d-flex gap-3 overflow-x-auto pb-2 hide-scrollbar">
+                        {% for addr in user_addresses %}
+                        <div class="flex-shrink-0" style="width: 280px;">
+
+                            <input type="radio" class="btn-check address-selector" name="address_preset" id="preset_{{ addr.id }}" autocomplete="off"
+                                {% if addr.is_default %}checked{% endif %}
+                                data-first="{{ addr.first_name }}" data-last="{{ addr.last_name }}" data-phone="{{ addr.phone_number }}"
+                                data-street="{{ addr.street_address }}" data-city="{{ addr.city }}" data-postal="{{ addr.postal_code }}" data-country="{{ addr.country.code }}">
+
+                            <label class="btn btn-outline-dark w-100 text-start p-3 rounded-4" for="preset_{{ addr.id }}">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <strong class="text-uppercase">{{ addr.name }}</strong>
+
+                                    {% if addr.is_default %}
+                                        <span class="badge bg-secondary">Default</span>
+                                    {% endif %}
+
+                                </div>
+
+                                <small class="text-muted d-block">{{ addr.street_address }}</small>
+                                <small class="text-muted">{{ addr.city }}, {{ addr.postal_code }}</small>
+
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
                 <div class="card shadow-sm border-dark mb-3" id="card-step-1">
                     <div class="card-header bg-white border-bottom-0 py-3 step-header d-flex justify-content-between align-items-center" id="header-step-1" onclick="openStep(1)">
                         <h4 class="mb-0">
@@ -142,22 +174,6 @@
 </div>
 
 <script>
-    document.getElementById('id_phone_number').addEventListener('input', function (e) {
-        this.value = this.value.replace(/[^0-9+\s]/g, '');
-    });
-    
-    const postalInput = document.getElementById('id_postal-mask');
-
-    if (postalInput) {
-        postalInput.addEventListener('input', function (e) {
-            let rawValue = this.value.replace(/[^0-9]/g, '');
-            if (rawValue.length > 2) {
-                this.value = rawValue.substring(0, 2) + '-' + rawValue.substring(2, 5);
-            } else {
-                this.value = rawValue;
-            }
-        });
-    }
 
     let highestUnlockedStep = 1;
 
@@ -226,6 +242,19 @@
             document.getElementById('summary-grand-total').innerText = newGrandTotal.toFixed(2);
         });
     });
+
+    document.querySelectorAll('.address-selector').forEach(radio => {
+        radio.addEventListener('change', function() {
+            document.getElementById('id_first_name').value = this.dataset.first;
+            document.getElementById('id_last_name').value = this.dataset.last;
+            document.getElementById('id_phone_number').value = this.dataset.phone;
+            document.getElementById('id_street_address').value = this.dataset.street;
+            document.getElementById('id_city').value = this.dataset.city;
+            document.getElementById('id_postal_code').value = this.dataset.postal;
+            document.getElementById('id_country').value = this.dataset.country;
+        });
+    });
+
 </script>
 
 {% endblock %}

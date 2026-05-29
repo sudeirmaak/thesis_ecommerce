@@ -224,12 +224,15 @@ class CheckoutView(LoginRequiredMixin, View):
 
         form = CheckoutForm(initial=initial_data)
 
+        user_addresses = Address.objects.filter(user=request.user)
+
         context = {
             'form': form,
             'cart_items': cart_items,
             'total_price': total_price,
             'shipping_cost': default_shipping,
-            'grand_total': grand_total
+            'grand_total': grand_total,
+            'user_addresses': user_addresses,
         }
 
         return render(request, 'store/checkout.html', context)

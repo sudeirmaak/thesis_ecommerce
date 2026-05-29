@@ -7,30 +7,25 @@ class CheckoutForm(forms.ModelForm):
         fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'city', 'street_address', 'postal_code', 'shipping_method')
 
         widgets = {
-            'first_name': forms.TextInput(attrs={'placeholder': 'John'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control border-secondary p-2', 'placeholder': 'John'}),
 
-            'last_name': forms.TextInput(attrs={'placeholder': 'Smith'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control border-secondary p-2', 'placeholder': 'Smith'}),
 
             'email': forms.EmailInput(attrs={
+                'class': 'form-control border-secondary p-2',
                 'placeholder': 'you@example.com',
                 'list': 'email-suggestions'
             }),
 
-            'phone_number': forms.TextInput(attrs={
-                'placeholder': '+48 123 456 789',
-                'pattern': r'^\+?[0-9\s]+$',
-                'title': 'Enter a valid phone number (e.g. +48 123 456 789)',
-                'minlength': '9',
-                'maxlength': '15'
-            }),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control border-secondary py-2 phone-mask'}),
 
-            'city': forms.TextInput(attrs={'placeholder': 'Warsaw'}),
+            'city': forms.TextInput(attrs={'class': 'form-control border-secondary p-2', 'placeholder': 'Warsaw'}),
 
-            'street_address': forms.TextInput(attrs={'placeholder': 'Piotrkowska 123, Apt. 4'}),
+            'street_address': forms.TextInput(attrs={'class': 'form-control border-secondary p-2', 'placeholder': 'Piotrkowska 123, Apt. 4'}),
 
             'postal_code': forms.TextInput(attrs={
+                'class': 'form-control border-secondary p-2 postal-mask',
                 'placeholder': '12-345',
-                'id': 'postal-mask'
             }),
 
             'shipping_method': forms.RadioSelect(attrs={'class': 'form-check-input'})

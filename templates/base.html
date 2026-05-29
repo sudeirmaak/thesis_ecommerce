@@ -13,6 +13,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.4/build/css/intlTelInput.min.css">
+    
+    <style>
+        .iti { width: 100%; display: block; }
+    </style>
+
     {% block extra_css %}{% endblock %}
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -181,5 +187,54 @@
             })
         }, 5000);
     </script>
+
+    <!--for some reason not working-->
+    <datalist id="email-suggestions">
+        <option value="@gmail.com">
+        <option value="@yahoo.com">
+        <option value="@hotmail.com">
+        <option value="@outlook.com">
+    </datalist>
+
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.4/build/js/intlTelInput.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            document.addEventListener('input', function (e) {
+                if (e.target.classList.contains('postal-mask')) {
+                    let rawValue = e.target.value.replace(/[^0-9]/g, '');
+                    if (rawValue.length > 2) {
+                        e.target.value = rawValue.substring(0, 2) + '-' + rawValue.substring(2, 5);
+                    } else {
+                        e.target.value = rawValue;
+                    }
+                }
+            });
+
+            const phoneInputs = document.querySelectorAll('.phone-mask');
+            phoneInputs.forEach(input => {
+                const iti = window.intlTelInput(input, {
+                    initialCountry: "pl",
+                    showSelectedDialCode: true, 
+                    autoPlaceholder: "polite",
+                    formatAsYouType: true,      
+                    nationalMode: true,        
+                    strictMode: true,           
+                    utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.4/build/js/utils.js",
+                });
+
+                const form = input.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function() {
+                        if (input.value.trim() !== "" && iti.isValidNumber()) {
+                            input.value = iti.getNumber();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
