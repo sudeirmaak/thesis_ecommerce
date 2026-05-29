@@ -10,33 +10,37 @@
             </div>
     <div class="row">
         <div class="col-lg-3 col-md-4 mb-4">
-            <div class="list-group list-group-flush rounded">
-                <a href="{% url 'users:profile' %}" class="list-group-item list-group-item-action
-                    {% if request.resolver_match.url_name == 'profile' %} active bg-dark border-dark text-white {% endif %}">
-                    My Details
-                </a>
+            <div class="position-sticky" style="top: 30px;">
 
-                <a href="{% url 'users:orders' %}" class="list-group-item list-group-item-action
-                    {% if request.resolver_match.url_name == 'orders' or request.resolver_match.url_name == 'order_detail' %} active bg-dark border-dark text-white {% endif %}">
-                    My Orders
-                </a>
+                <div class="list-group list-group-flush rounded">
+                    <a href="{% url 'users:profile' %}" class="list-group-item list-group-item-action
+                        {% if request.resolver_match.url_name == 'profile' %} active bg-dark border-dark text-white {% endif %}">
+                        My Details
+                    </a>
 
-                <a href="{% url 'users:subscriptions' %}" class="list-group-item list-group-item-action
-                    {% if request.resolver_match.url_name == 'subscriptions' %} active bg-dark border-dark text-white {% endif %}">
-                    My Subscriptions
-                </a>
+                    <a href="{% url 'users:orders' %}" class="list-group-item list-group-item-action
+                        {% if request.resolver_match.url_name == 'orders' or request.resolver_match.url_name == 'order_detail' %} active bg-dark border-dark text-white {% endif %}">
+                        My Orders
+                    </a>
 
-                <a href="{% url 'users:settings' %}" class="list-group-item list-group-item-action
-                    {% if request.resolver_match.url_name == 'settings' %} active bg-dark border-dark text-white {% endif %}">
-                    Settings   
-                </a>
+                    <a href="{% url 'users:subscriptions' %}" class="list-group-item list-group-item-action
+                        {% if request.resolver_match.url_name == 'subscriptions' %} active bg-dark border-dark text-white {% endif %}">
+                        My Subscriptions
+                    </a>
 
-                <form method="POST" action="{% url 'users:logout' %}" class="m-0 p-0 border-top mt-2">
-                    {% csrf_token %}
-                    <button type="submit" class="list-group-item list-group-item-action text-danger fw-bold w-100 text-start">
-                        Log Out
-                    </button>
-                </form>
+                    <a href="{% url 'users:settings' %}" class="list-group-item list-group-item-action
+                        {% if request.resolver_match.url_name == 'settings' %} active bg-dark border-dark text-white {% endif %}">
+                        Settings   
+                    </a>
+
+                    <form method="POST" action="{% url 'users:logout' %}" class="m-0 p-0 border-top mt-2">
+                        {% csrf_token %}
+                        <button type="submit" class="list-group-item list-group-item-action text-danger fw-bold w-100 text-start">
+                            Log Out
+                        </button>
+                    </form>
+                </div>
+                
             </div>
         </div>
 

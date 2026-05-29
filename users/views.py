@@ -97,6 +97,7 @@ class SettingsView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['addresses'] = Address.objects.filter(user=self.request.user)
+        context['address_form'] = AddressForm()
         return context
 
 
@@ -116,16 +117,23 @@ class OrderDetailView(LoginRequiredMixin, TemplateView):
 
         return context
     
-class AddAddressView(LoginRequiredMixin, CreateView):
-    model = Address
-    form_class =AddressForm
-    template_name = 'users:add_address.html'
-    success_url = reverse_lazy('users:settings')
+@login_required
+def add_address(request):
+    if request.method == 'POST':
+        form = AddressForm(request.POST)
 
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        messages.success(self.request, "New address added successfully!")
-        return super().form_valid(form)
+        if Address.objects.filter(user=request.user).count() >= 5:
+            messages.error(request, "You cannot have more than 5 addresses saved.")
+            return redirect('users:settings')
+            
+        if form.is_valid():
+            form.instance.user = request.user
+            form.save()
+            messages.success(request, "New address added successfully!")
+        else:
+            messages.error(request, "Invalid address data. Please try again.")
+            
+    return redirect('users:settings')
     
 @login_required
 def delete_address(request, address_id):

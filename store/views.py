@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.views.generic import ListView, DetailView, TemplateView
 from django.views import View
 from .models import Product, Category, Cart, CartItem, Order, OrderItem, Subscription
+from users.models import Address
 from .forms import CheckoutForm
 from decimal import Decimal
 
@@ -198,7 +199,30 @@ class CheckoutView(LoginRequiredMixin, View):
         default_shipping = Decimal('5.00')
         grand_total = total_price + default_shipping
 
-        form = CheckoutForm()
+        initial_data = {
+            'email': request.user.email,
+        }
+
+        default_address = Address.objects.filter(user=request.user, is_default=True).first()
+
+        if default_address:
+            initial_data.update({
+                'first_name':default_address.first_name,
+                'last_name':default_address.last_name,
+                'phone_number':default_address.phone_number,
+                'street_address':default_address.street_address,
+                'city':default_address.city,
+                'postal_code':default_address.postal_code,
+                'country':default_address.country,
+            })
+        else:
+            initial_data.update ({
+                'first_name': request.user.first_name,
+                'last_name': request.user.last_name,
+                'phone_number': request.user.phone_number,
+            })
+
+        form = CheckoutForm(initial=initial_data)
 
         context = {
             'form': form,

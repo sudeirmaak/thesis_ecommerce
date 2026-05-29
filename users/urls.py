@@ -17,7 +17,7 @@ urlpatterns = [
     path('profile/subscriptions/', views.SubscriptionsView.as_view(), name='subscriptions'),
     path('profile/settings/', views.SettingsView.as_view(), name='settings'),
 
-    path('profile/addresses/add/', views.AddAddressView.as_view(), name='add_address'),
+    path('profile/addresses/add/', views.add_address, name='add_address'),
     path('profile/addresses/<int:address_id>/delete/', views.delete_address, name='delete_address'),
     path('profile/addresses/<int:address_id>/set-default/', views.set_default_address, name='set_default_address'),
 
