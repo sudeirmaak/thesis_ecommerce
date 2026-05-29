@@ -137,3 +137,8 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 COUNTRIES_ONLY = ['PL', 'DE', 'FR', 'CZ', 'SK', 'LT', 'US', 'GB', 'TR']
+
+AUTHENTICATION_BACKENDS = [
+    'users.backends.EmailOrUsernameModelBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]

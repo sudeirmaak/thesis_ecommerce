@@ -19,8 +19,12 @@ class CustomUserCreationForm(UserCreationForm):
 
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
+        
+        self.fields['first_name'].widget.attrs.update({'autofocus': 'autofocus'})
 
 class CustomLoginForm(AuthenticationForm):
+    username = forms.CharField(label='Username or Email', widget=forms.TextInput(attrs={'class': 'form-control'}))
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -56,7 +60,7 @@ class CustomUserUpdateForm(forms.ModelForm):
 
         for field_name, field in self.fields.items():
             if field_name == 'email':
-                field.widget.attrs.update({'class': 'form-control border-secondary p-2', 'list': 'email-suggestions'})
+                field.widget.attrs.update({'class': 'form-control border-secondary p-2'})
             elif field_name == 'phone_number':
                 field.widget.attrs.update({'class': 'form-control border-secondary py-2 phone-mask'})
             else:

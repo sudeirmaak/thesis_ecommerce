@@ -14,7 +14,6 @@ class CheckoutForm(forms.ModelForm):
             'email': forms.EmailInput(attrs={
                 'class': 'form-control border-secondary p-2',
                 'placeholder': 'you@example.com',
-                'list': 'email-suggestions'
             }),
 
             'phone_number': forms.TextInput(attrs={'class': 'form-control border-secondary py-2 phone-mask'}),
