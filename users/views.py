@@ -2,8 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, TemplateView, UpdateView
 from django.urls import reverse_lazy
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.views import LoginView
+from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.http import HttpResponseRedirect
@@ -117,6 +118,14 @@ class OrderDetailView(LoginRequiredMixin, TemplateView):
 
         return context
     
+class CustomPasswordChangeView(auth_views.PasswordChangeView):
+    template_name = 'users/change_password.html'
+    success_url = reverse_lazy('users:settings')
+    
+    def form_valid(self, form):
+        messages.success(self.request, "Your password has been updated successfully!")
+        return super().form_valid(form)
+    
 @login_required
 def add_address(request):
     if request.method == 'POST':
@@ -148,4 +157,15 @@ def set_default_address(request, address_id):
     address.is_default = True
     address.save()
     messages.success(request, f"{address.name} is now your default address!")
+    return redirect('users:settings')
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        user = request.user
+        logout(request)
+        user.delete()
+        messages.success(request, "Your account and all associated data have been permanently deleted.")
+        return redirect('home')
+    
     return redirect('users:settings')

@@ -29,7 +29,7 @@
                     </a>
 
                     <a href="{% url 'users:settings' %}" class="list-group-item list-group-item-action
-                        {% if request.resolver_match.url_name == 'settings' %} active bg-dark border-dark text-white {% endif %}">
+                        {% if request.resolver_match.url_name == 'settings' or request.resolver_match.url_name == 'change_password' %} active bg-dark border-dark text-white {% endif %}">
                         Settings   
                     </a>
 
