@@ -50,17 +50,25 @@
 
                     <label class="fw-bold mb-2">Purchase Option:</label>
                     <div class="btn-group w-100 mb-4">
-                        <input type="radio" class="btn-check" name="purchase" id="one_time" value="One-Time" autocomplete="off" checked>
+                        <input type="radio" class="btn-check" name="purchase" id="one_time" value="one_time" autocomplete="off" checked>
                         <label class="btn btn-outline-dark" for="one_time">One-Time</label>
 
-                        <input type="radio" class="btn-check" name="purchase" id="subscription" value="Subscription" autocomplete="off">
+                        <input type="radio" class="btn-check" name="purchase" id="subscription" value="subscribe" autocomplete="off">
                         <label class="btn btn-outline-dark" for="subscription">Subscription</label>
+                    </div>
+
+                    <div id="frequency-container" class="d-none mb-4 p-3 bg-light rounded border border-success">
+                        <label class="fw-bold mb-2 text-success"><i class="bi bi-tag-fill"></i> Subscribe & Save 10%</label>
+                        <select name="frequency" class="form-select border-success">
+                            <option value="M">Delivery Every 1 Month</option>
+                            <option value="W">Delivery Every 1 Week</option>
+                        </select>
                     </div>
 
                 {% else %}
                     <input type="hidden" name="size" value="">
                     <input type="hidden" name="grind" value="">
-                    <input type="hidden" name="purchase" value="One-Time">
+                    <input type="hidden" name="purchase" value="one_time">
 
                 {% endif %}
 
@@ -88,27 +96,38 @@
     document.addEventListener('DOMContentLoaded', function() {
         const sizeRadios = document.querySelectorAll('input[name="size"]');
         const priceDisplay = document.getElementById('display-price');
+        const purchaseRadios = document.querySelectorAll('input[name="purchase"]');
+        const frequencyContainer = document.getElementById('frequency-container');
 
         let basePrice = parseFloat(priceDisplay.getAttribute('data-base-price'));
 
-        if (isNaN(basePrice)) {
-            basePrice = parseFloat(priceDisplay.innerText.replace(/[^0-9.]/g, ''));
+        function calculatePrice() {
+            let sizeMultiplier = 1.0;
+            let discountMultiplier = 1.0;
+
+            const selectedSize = document.querySelector('input[name="size"]:checked')?.value;
+            if (selectedSize === '500g') {
+                sizeMultiplier = 1.8;
+            } else if (selectedSize === '1kg') {
+                sizeMultiplier = 3.5;
+            }
+
+            const selectedPurchase = document.querySelector('input[name="purchase"]:checked')?.value;
+            if (selectedPurchase === 'subscribe') {
+                discountMultiplier = 0.90; // 10% discount
+                if(frequencyContainer) frequencyContainer.classList.remove('d-none');
+            } else {
+                if(frequencyContainer) frequencyContainer.classList.add('d-none');
+            }
+
+            const newPrice = (basePrice * sizeMultiplier * discountMultiplier).toFixed(2);
+            priceDisplay.innerText = '$' + newPrice;
         }
 
-        sizeRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                let multiplier = 1.0;
-
-                if (this.value === '500g') {
-                    multiplier = 1.8;
-                } else if (this.value === '1kg') {
-                    multiplier = 3.5;
-                }
-
-                const newPrice = (basePrice * multiplier).toFixed(2);
-                priceDisplay.innerText = '$' + newPrice;
-            });
-        });
+        sizeRadios.forEach(radio => radio.addEventListener('change', calculatePrice));
+        if (purchaseRadios) {
+            purchaseRadios.forEach(radio => radio.addEventListener('change', calculatePrice));
+        }
     });
 
 </script>

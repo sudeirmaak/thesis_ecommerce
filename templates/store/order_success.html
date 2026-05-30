@@ -10,6 +10,22 @@
             <h1 class="mt-4 fw-bold">Thank You For Your Order!</h1>
             <p class="text-muted mb-4">Your order has been placed securely and is being processed.</p>
 
+            {% for item in order.items.all %}
+                {% if item.purchase_option == 'subscribe' %}
+                    <div class="alert alert-success border-success bg-success bg-opacity-10 py-3 mb-4 text-start">
+                        <h6 class="fw-bold text-success mb-1">
+                            <i class="bi bi-arrow-repeat me-2"></i>Subscription Confirmed!
+                        </h6>
+                        <p class="small text-success mb-0">
+                            Your recurring delivery for <strong>{{ item.product.name }}</strong> has been set up. You can manage, pause, or cancel this anytime from your Profile settings.
+                        </p>
+                        <a href="{% url 'users:subscriptions' %}" class="btn btn-sm btn-success fw-bold px-3">
+                            Go to My Subscriptions
+                        </a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+
             <div class="card shadow-sm border-0 bg-light mb-4 text-start">
                 <div class="card-body p-4">
 

@@ -14,8 +14,12 @@ urlpatterns = [
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('profile/orders/', views.OrdersView.as_view(), name='orders'),
     path('profile/orders/<int:order_id>/', views.OrderDetailView.as_view(), name='order_detail'),
-    path('profile/subscriptions/', views.SubscriptionsView.as_view(), name='subscriptions'),
     path('profile/settings/', views.SettingsView.as_view(), name='settings'),
+
+    path('profile/subscriptions/', views.SubscriptionsView.as_view(), name='subscriptions'),
+    path('profile/subscriptions/<int:subscription_id>/pause/', views.pause_subscription, name='pause_subscription'),
+    path('profile/subscriptions/<int:subscription_id>/resume/', views.resume_subscription, name='resume_subscription'),
+    path('profile/subscriptions/<int:subscription_id>/cancel/', views.cancel_subscription, name='cancel_subscription'),
 
     path('profile/addresses/add/', views.add_address, name='add_address'),
     path('profile/addresses/<int:address_id>/delete/', views.delete_address, name='delete_address'),

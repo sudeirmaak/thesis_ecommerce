@@ -42,6 +42,13 @@
                                                 <small class="text-muted d-block mt-1">{{ item.size }} | {{ item.grind }}</small>
                                             {% endif %}
 
+                                            {% if item.purchase_option == 'subscribe' %}
+                                                <small class="text-success fw-bold d-block mt-1">
+                                                    <i class="bi bi-arrow-repeat"></i> 10% Off Subscription 
+                                                    ({% if item.frequency == 'W' %}Weekly{% else %}Monthly{% endif %})
+                                                </small>
+                                            {% endif %}
+
                                         </div>
                                     </div>
                                 </td>

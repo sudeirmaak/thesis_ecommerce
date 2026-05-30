@@ -3,10 +3,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, TemplateView
 from django.views import View
+from django.utils import timezone
 from .models import Product, Category, Cart, CartItem, Order, OrderItem, Subscription
 from users.models import Address
 from .forms import CheckoutForm
 from decimal import Decimal
+from datetime import timedelta
 
 class HomeView(TemplateView):
     template_name = 'store/home.html'
@@ -40,6 +42,7 @@ def add_to_cart(request, product_id):
         grind = request.POST.get('grind')
         purchase_option = request.POST.get('purchase')
         quantity = int(request.POST.get('quantity', 1))
+        frequency = request.POST.get('frequency')
 
         if request.user.is_authenticated:
             cart, created = Cart.objects.get_or_create(user = request.user)
@@ -49,7 +52,8 @@ def add_to_cart(request, product_id):
                 product = product,
                 size = size,
                 grind = grind,
-                purchase_option = purchase_option
+                purchase_option = purchase_option,
+                frequency = frequency
             )
             if not item_created:
                 cart_item.quantity += quantity
@@ -72,7 +76,8 @@ def add_to_cart(request, product_id):
                     'size': size,
                     'grind': grind,
                     'purchase_option': purchase_option,
-                    'quantity': quantity
+                    'quantity': quantity,
+                    'frequency': frequency
                 }
 
             request.session['cart'] = cart_session
@@ -104,6 +109,7 @@ def cart_summary(request):
                     'grind': item.grind,
                     'quantity': item.quantity,
                     'purchase_option': item.purchase_option,
+                    'frequency': item.frequency,
                     'unit_price': item.get_unit_price(),
                     'subtotal': subtotal,
                     'item_id': item.id
@@ -126,6 +132,7 @@ def cart_summary(request):
                     'grind': item_data['grind'],
                     'quantity': item_data['quantity'],
                     'purchase_option': item_data['purchase_option'],
+                    'frequency': item_data.get('frequency', 'M'),
                     'unit_price': size_price,
                     'subtotal': subtotal,
                     'item_id': key
@@ -276,6 +283,23 @@ class CheckoutView(LoginRequiredMixin, View):
                     grind = item.grind,
                     purchase_option = item.purchase_option
                 )
+
+                if item.purchase_option == 'subscribe':
+                    days_to_add = 7 if item.frequency == 'W' else 30
+                    next_date = timezone.now().date() + timedelta(days=days_to_add)
+
+                    Subscription.objects.create(
+                        user = request.user,
+                        original_order = order,
+                        product = item.product,
+                        quantity = item.quantity,
+                        size = item.size,
+                        grind = item.grind,
+                        price_locked = item.get_unit_price(),
+                        status = 'A',
+                        frequency = item.frequency,
+                        next_delivery_date = next_date
+                    )
 
             cart.cartitem_set.all().delete()
 

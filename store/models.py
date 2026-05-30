@@ -78,12 +78,18 @@ class CartItem(models.Model):
     size = models.CharField(max_length=50, blank=True)
     grind = models.CharField(max_length=50, blank=True)
     purchase_option = models.CharField(max_length=50, blank=True)
+    frequency = models.CharField(max_length=1, choices=FREQUENCY_CHOICES_SUBSCRIPTION, null=True, blank=True)
 
     def __str__(self):
         return f"{self.quantity}x {self.product.name} (Cart {self.cart.id})"
     
     def get_unit_price(self):
-        return self.product.get_size_price(self.size)
+        price = self.product.get_size_price(self.size)
+
+        if self.purchase_option == 'subscribe':
+            price = price * Decimal('0.90')
+
+        return round(price, 2)
     
     def get_subtotal(self):
         return self.get_unit_price() * self.quantity
@@ -119,6 +125,7 @@ class OrderItem(models.Model):
     size = models.CharField(max_length=50, blank=True)
     grind = models.CharField(max_length=50, blank=True)
     purchase_option = models.CharField(max_length=50, blank=True)
+    frequency = models.CharField(max_length=1, choices=FREQUENCY_CHOICES_SUBSCRIPTION, null=True, blank=True)
 
     def __str__(self):
         if self.product:
@@ -133,6 +140,10 @@ class Subscription(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     original_order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    quantity = models.PositiveIntegerField(default=1)
+    size = models.CharField(max_length=50, blank=True)
+    grind = models.CharField(max_length=50, blank=True)
+    price_locked =models.DecimalField(max_digits=7, decimal_places=2, help_text="The 10% discounted price locked in at purchase")
     status = models.CharField(max_length=1, choices=STATUS_CHOICES_SUBSCRIPTION, default="A")
     frequency = models.CharField(max_length=1, choices=FREQUENCY_CHOICES_SUBSCRIPTION, default="W")
     next_delivery_date = models.DateField(null=True, blank=True)
@@ -140,7 +151,6 @@ class Subscription(models.Model):
 
     def __str__(self):
         if self.product:
-            return f"Subscription: {self.product.name} for {self.user.username}"
-        else:
-            return f"Subscription: Deleted Product for {self.user.username}"
+            return f"{self.user.username} - {self.quantity}x {self.product.name} ({self.get_frequency_display()})"
+        return f"Subscription for {self.user.username}"
 

@@ -2,15 +2,18 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import CreateView, TemplateView, UpdateView
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.contrib.auth import login, logout
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from store.models import Cart, CartItem, Product, Order
+from store.models import Cart, CartItem, Product, Order, Subscription
 from .forms import CustomUserCreationForm, CustomLoginForm, CustomUserUpdateForm, AddressForm
 from .models import Address
+from datetime import timedelta
+
 
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
@@ -42,7 +45,8 @@ class CustomLoginView(LoginView):
                     product = product,
                     size = item_data['size'],
                     grind = item_data['grind'],
-                    purchase_option = item_data['purchase_option']
+                    purchase_option = item_data['purchase_option'],
+                    frequency = item_data.get('frequency')
                 )
 
                 if not item_created:
@@ -76,6 +80,11 @@ class OrdersView(LoginRequiredMixin, TemplateView):
 class SubscriptionsView(LoginRequiredMixin, TemplateView):
     template_name = 'users/subscriptions.html'
     login_url = 'users:login'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['subscriptions'] = Subscription.objects.filter(user=self.request.user).order_by('-created_at')
+        return context
 
 class SettingsView(LoginRequiredMixin, UpdateView):
     template_name = 'users/settings.html'
@@ -169,3 +178,44 @@ def delete_account(request):
         return redirect('home')
     
     return redirect('users:settings')
+
+@login_required
+def pause_subscription(request, subscription_id):
+    subscription = get_object_or_404(Subscription, id=subscription_id, user=request.user)
+
+    if subscription.status == 'A':
+        subscription.status = 'P'
+        subscription.save()
+        messages.warning(request, f"Your subscription for {subscription.product.name} has been paused.")
+
+    return redirect('users:subscriptions')
+
+@login_required
+def resume_subscription(request, subscription_id):
+    subscription = get_object_or_404(Subscription, id=subscription_id, user=request.user)
+
+    if subscription.status == 'P':
+        subscription.status = 'A'
+        today = timezone.now().date()
+
+        if subscription.next_delivery_date and subscription.next_delivery_date <= today:
+            days_to_add = 7 if subscription.frequency == 'W' else 30
+            subscription.next_delivery_date = today + timedelta(days=days_to_add)
+
+        subscription.save()
+
+        formatted_date = subscription.next_delivery_date.strftime("%b %d, %Y")
+        messages.warning(request, f"Your subscription for {subscription.product.name} is now active! Next delivery: {formatted_date}")
+
+    return redirect('users:subscriptions')
+
+@login_required
+def cancel_subscription(request, subscription_id):
+    subscription = get_object_or_404(Subscription, id=subscription_id, user=request.user)
+
+    if subscription.status != 'C':
+        subscription.status = 'C'
+        subscription.save()
+        messages.warning(request, f"Your subscription for {subscription.product.name} has been permanently cancelled.")
+
+    return redirect('users:subscriptions')
