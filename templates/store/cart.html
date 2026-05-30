@@ -123,6 +123,13 @@
                         <strong>${{ grand_total }}</strong>
                     </div>
 
+                    {% if not user.is_authenticated %}
+                        <div class="alert alert-warning border-warning bg-warning bg-opacity-10 py-2 px-3 mb-3 text-center small">
+                             <i class="bi bi-person-lock me-1"></i> 
+                            You will be asked to <strong>Log In</strong> or <strong>Register</strong> on the next step to complete your purchase.
+                        </div>
+                    {% endif %}
+
                     <a href="{% url 'checkout' %}" class="btn btn-dark btn-lg w-100">Proceed to Checkout</a>
                 </div>
             </div>

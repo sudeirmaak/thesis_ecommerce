@@ -144,7 +144,13 @@ def cart_summary(request):
             product = get_object_or_404(Product, id= item_data['product_id'])
 
             size_price = product.get_size_price(item_data['size'])
+
+            if item_data.get('purchase_option') == 'subscribe':
+                size_price = size_price * Decimal('0.90')
+
             subtotal = item_data['quantity'] * size_price
+
+            cart_subtotal += subtotal
 
             new_item = {
                     'product': product,
@@ -210,6 +216,8 @@ def update_cart(request, item_id):
     return redirect('cart_summary')
 
 class CheckoutView(LoginRequiredMixin, View):
+    login_url = 'users:login'
+
     def get(self, request):
         cart = Cart.objects.filter(user=request.user).first()
 

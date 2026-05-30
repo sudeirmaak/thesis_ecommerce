@@ -11,6 +11,13 @@
                 <form method="POST">
                     {% csrf_token %}
 
+                    {% if request.GET.next %}
+                        <div class="alert alert-info border-info bg-info bg-opacity-10 small mb-4">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            <strong>Almost there!</strong> Please log in or create a free account to securely save your order and manage your recurring subscriptions.
+                        </div>
+                    {% endif %}
+
                     {% if form.non_field_errors %}
                         <div class="alert alert-danger shadow-sm border-0 py-2 mb-3">
                             {% for error in form.non_field_errors %}
