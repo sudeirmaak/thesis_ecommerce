@@ -36,11 +36,18 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav gap-5 mt-5 mt-lg-0 align-items-center ms-auto"> <!-- push navbar items to the right auto -->
-                    <li class="nav-item">
-                        <a class="nav-link fs-3 p-0 " href="/search">
-                            <i class="bi bi-search"></i>
-                        </a>
+
+                    <li class="nav-item me-3 d-flex align-items-center">
+                        <form action="{% url 'search' %}" method="GET" class="m-0">
+                            <div class="input-group input-group-sm rounded-pill border border-dark overflow-hidden">
+                                <input type="text" name="q" class="form-control border-0 bg-transparent shadow-none px-3" placeholder="Search coffees..." required style="width: 160px; font-size: 0.9rem;">
+                                <button class="btn border-0 text-dark pe-3 shadow-none" type="submit" title="Search">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </form>
                     </li>
+
                     <li class="nav-item">
                         {% if user.is_authenticated %}
                             <a class="nav-link fs-3 p-0 " href="{% url 'users:profile' %}" title="Logout">

@@ -11,7 +11,9 @@
 
     <div class=" text-center mb-5">
         <h2 class="display-6 fw-bold text-dark text-uppercase tracking-wide mb-2">  
-            {% if current_category %}
+            {% if search_query %}
+                Search: "{{ search_query }}"
+            {% elif current_category %}
                 {{ current_category.name }}
             {% else %}
                 Our Collection

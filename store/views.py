@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.views.generic import ListView, DetailView, TemplateView
 from django.views import View
 from django.utils import timezone
+from django.db.models import Q
 from .models import Product, Category, Cart, CartItem, Order, OrderItem, Subscription
 from users.models import Address
 from .forms import CheckoutForm
@@ -53,6 +54,30 @@ class CategoryView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['current_category'] = get_object_or_404(Category, slug=self.kwargs.get('slug'))
+        return context
+    
+class SearchView(ListView):
+    model = Product
+    template_name = 'store/product.list.html'
+    context_object_name = 'products'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+
+        if query:
+            return Product.objects.filter(
+                Q(name__icontains = query) |
+                Q(description__icontains = query) |
+                Q(tags__icontains = query) |
+                Q(category__name__icontains=query)
+            ).distinct()
+        
+        return Product.objects.none()
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_query'] = self.request.GET.get('q', '')
+        context['current_category'] = None
         return context
 
 def add_to_cart(request, product_id):
