@@ -1,38 +1,125 @@
 {% extends 'base.html' %}
 {% block content%}
 
-<div class="container py-5">
+<div class="container my-5">
 
-    <div class="mb-4">
-        <a href="{% url 'home' %}" class="text-dark me-3">
-            <i class="bi bi-arrow-left fs-3"></i>
-        </a>
+    <div class=" text-center mb-5">
+        <h2 class="display-6 fw-bold text-dark text-uppercase tracking-wide mb-2">  
+            {% if current_category %}
+                {{ current_category.name }}
+            {% else %}
+                Our Collection
+            {% endif %}
+        </h2>
+        <p class="text-muted max-w-2xl mx-auto italic">
+            {% if search_query %}
+                Showing results for your search.
+            {% elif current_category.description %}
+                {{ current_category.description }}
+            {% elif current_category.slug == 'brewing-equipment' or current_category.slug == 'equipment' %}
+                Precision-engineered tools to elevate your daily brewing ritual.
+            {% else %}
+                Sustainably sourced, meticulously roasted, and freshly delivered directly to your doorstep.
+            {% endif %}
+        </p>
+        <hr class="mx-auto my-4 border-secondary opacity-25" style="width: 60px; border-width: 2px;">   
     </div>
-    
-    <h1>General Logic - Style Later</h1>
-    <div class="row">
-        {% for product in products %}
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 border-0 shadow-sm">
 
-                {% if product.image %}
-                    <img class="card-img-top" src="{{ product.image.url }}" style="object-fit: cover; height: 350px;">
-                {% else %}
-                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center text-white" style="height: 350px;">
-                        <i class="bi bi-camera bg-secondary" style="font-size: 3rem;"></i>
+    {% if products %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for product in products %}
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden product-premium-card custom-transition">
+                        <div class="position-relative overflow-hidden bg-light border-bottom border-light-subtle" style="padding-top: 100%;">
+                            <a href="{% url 'product_detail' product.slug %}" class="d-block position-absolute top-0 start-0 w-100 h-100">
+
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-100 h-100 object-fit-cover card-img-hover custom-transition">
+                                {% else %}
+                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted bg-secondary bg-opacity-10">
+                                        <i class="bi bi-image fs-1"></i>
+                                    </div>
+                                {% endif %}
+
+                            </a>
+
+                            <div class="position-absolute top-3 start-3 d-flex flex-column gap-2" style="top: 15px; left: 15px;">
+
+                                {% if product.category.slug != 'equipment' %}
+                                    <span class="badge bg-dark bg-opacity-75 text-white fw-semibold small rounded-pill px-3 py-2 uppercase-tracking tracking-wider">
+                                        <i class="bi bi-arrow-repeat me-1"></i> Subscribe & Save 10%
+                                    </span>
+                                {% endif %}
+
+                                {% if product.stock <= 3 and product.stock > 0 %}
+                                    <span class="badge bg-danger text-white fw-semibold small rounded-pill px-3 py-2">
+                                        Only {{ product.stock }} Left
+                                    </span>
+                                {% elif product.stock == 0 %}
+                                    <span class="badge bg-secondary text-white fw-semibold small rounded-pill px-3 py-2">
+                                        Out of Stock
+                                    </span>
+                                {% endif %}
+
+                            </div>
+                        </div>
+
+                        <div class="card-body p-4 d-flex flex-column">
+                            <span class="text-uppercase tracking-widest text-muted small fw-bold mb-1" style="font-size: 0.75rem; letter-spacing: 1.5px;">
+                                {{ product.category.name }}
+                            </span>
+
+                            <h5 class="card-title fw-bold mb-2">
+                                <a href="{% url 'product_detail' product.slug %}" class="text-dark text-decoration-none hover-text-primary">
+                                    {{ product.name }}
+                                </a>
+                            </h5>
+
+                            {% if product.tags %}
+                                <div class="mb-3 d-flex flex-wrap gap-1">
+                                    {% for tag in product.tags.split|slice:":3" %}
+                                        <span class="badge bg-light text-secondary border rounded-pill px-2 py-1 font-monospace" style="font-size: 0.7rem;">
+                                            #{{ tag|cut:"," }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <p class="card-text text-muted small flex-grow-1 line-clamp-3 mb-4">
+                                {{ product.description|truncatewords:18 }}
+                            </p>
+                            
+                            <div class="d-flex align-items-center justify-content-between pt-3 border-top border-light-subtle mt-auto">
+                                <div>
+                                    <span class="fs-5 fw-bold text-dark">${% if product.category.slug != 'equipment' %}{{ product.price }}{% else %}{{ product.price }}{% endif %}</span>
+                                    {% if product.category.slug != 'equipment' %}
+                                        <span class="text-muted small d-block" style="font-size: 0.75rem;">or subscription</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <a href="{% url 'product_detail' product.slug %}" class="btn btn-dark btn-sm rounded-pill px-4 py-2 fw-bold text-uppercase tracking-wider small-btn-text">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+
                     </div>
-                {% endif %} 
-                
-                <div class="card-body text-center">
-                    <h5>{{ product.name }}</h5>
-                    <p>{{ product.category.name }}</p>
-                    <p><strong>${{ product.price }}</strong></p>
-                    <a class="btn btn-dark" href="{% url 'product_detail' product.slug %}">View Details</a>
                 </div>
-            </div>
+            {% endfor %}
+
         </div>
-        {% endfor %}
-    </div>
+    
+    {% else %}
+        <div class="text-center py-5 my-5">
+            <div class="text-muted mb-3">
+                <i class="bi bi-shop fs-1 text-secondary opacity-50"></i>
+            </div>
+            <h3 class="fw-bold">No Products Available</h3>
+            <p class="text-muted">We couldn't find any products in this category right now. Check back soon!</p>
+            <a href="{% url 'product_list' %}" class="btn btn-outline-dark rounded-pill px-4 mt-2">Back to Shop</a>
+        </div>
+    {% endif %}
+
 </div>
 
 {% endblock %}

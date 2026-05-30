@@ -67,10 +67,12 @@
     <div class="bg-main-footer shadow-sm mb-4">
         <div class="container">
             <nav class="nav justify-content-center py-2 small fw-bold text-uppercase" style="letter-spacing: 1px;">
-                <a class="nav-link category-link {% if not request.GET.category %}active-link{% endif %} px-4" href="{% url 'product_list' %}">All</a>
+
+                <a class="nav-link category-link {% if request.resolver_match.url_name == 'product_list' %}active-category{% endif %} px-4" 
+                    href="{% url 'product_list' %}">All</a>
 
                 {% for category in categories %}
-                    <a class="nav-link category-link {% if request.GET.category == category.slug %}active-link{% endif %} px-4" href="{% url 'product_list' %}?category={{ category.slug }}">{{ category.name }}</a>
+                    <a class="nav-link category-link {% if current_category.slug == category.slug %}active-category{% endif %} px-4" href="{% url 'category_products' category.slug %}">{{ category.name }}</a>
                 {% endfor %}
             </nav>
         </div>

@@ -30,10 +30,30 @@ class ProductListView(ListView):
     template_name = 'store/product_list.html'
     context_object_name = 'products'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_category'] = None
+        return context  
+
 class ProductDetailView(DetailView):
     model = Product
     template_name = 'store/product_detail.html'
     context_object_name = 'product'
+
+class CategoryView(ListView):
+    model = Product
+    template_name = 'store/product_list.html'
+    context_object_name = 'products'
+
+    def get_queryset(self):
+        category_slug = self.kwargs.get('slug')
+        category = get_object_or_404(Category, slug=category_slug)
+        return Product.objects.filter(category=category)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_category'] = get_object_or_404(Category, slug=self.kwargs.get('slug'))
+        return context
 
 def add_to_cart(request, product_id):
     if request.method == 'POST':
