@@ -27,6 +27,13 @@ SHIPPING_CHOICES = [
     ("express", "Express Shipping ($15.00)")
 ]
 
+ROAST_CHOICES = [
+    ("Light", "Light"),
+    ("Medium", "Medium"),
+    ("Medium-Dark", "Medium-Dark"),
+    ("Dark", "Dark")
+]
+
 class Category(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
@@ -47,6 +54,12 @@ class Product(models.Model):
     image = models.ImageField(upload_to='images/')
     description = models.TextField(blank=True)
     tags = models.TextField(blank=True)
+
+    origin = models.CharField(max_length=100, blank=True, null=True)
+    roast_level = models.CharField(max_length=20, choices=ROAST_CHOICES, blank=True, null=True)
+    tasting_notes = models.CharField(max_length=255, blank=True, null=True, help_text="e.g., Chocolate, Cherry, Hazelnut")
+    brewing_instructions = models.TextField(blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -62,6 +75,17 @@ class Product(models.Model):
             size_price = self.price * Decimal('3.5')
 
         return round(size_price, 2)
+    
+    def get_average_rating(self):
+        reviews = self.reviews.all()
+        
+        if reviews:
+            total = sum(review.rating for review in reviews)
+            return round(total / len(reviews), 1)
+        return 0.0
+    
+    def get_review_count(self):
+        return self.reviews.count()
 
 class Cart(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -153,4 +177,18 @@ class Subscription(models.Model):
         if self.product:
             return f"{self.user.username} - {self.quantity}x {self.product.name} ({self.get_frequency_display()})"
         return f"Subscription for {self.user.username}"
+    
+class Review(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+    comment = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('product', 'user')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name} ({self.rating}/5)"
 

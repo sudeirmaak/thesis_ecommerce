@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, TemplateView
 from django.views import View
 from django.utils import timezone
 from django.db.models import Q
-from .models import Product, Category, Cart, CartItem, Order, OrderItem, Subscription
+from .models import Product, Category, Cart, CartItem, Order, OrderItem, Subscription, Review
 from users.models import Address
-from .forms import CheckoutForm
+from .forms import CheckoutForm, ReviewForm
 from decimal import Decimal
 from datetime import timedelta
 
@@ -40,6 +41,13 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = 'store/product_detail.html'
     context_object_name = 'product'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['review_form'] = ReviewForm()
+        context['recommended_products'] = Product.objects.filter(
+            category=self.object.category).exclude(id=self.object.id)[:4] #replace when scikit
+        return context  
 
 class CategoryView(ListView):
     model = Product
@@ -374,3 +382,23 @@ def order_success(request, order_id):
     }
 
     return render(request, 'store/order_success.html', context)
+
+@login_required(login_url='users:login')
+def submit_review(request, product_id):
+    if request.method == 'POST':
+        product = get_object_or_404(product, id=product_id)
+
+        if Review.objects.filter(user=request.user, product=product).exists():
+            messages.warning(request, "You have already reviewed this product.")
+            return redirect('product_detail', slug=product.slug)
+        
+        form = ReviewForm(request.POST)
+
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.product = product
+            review.user = request.user
+            review.save()
+            messages.success(request, "Thank you for your review!")
+
+    return redirect('product_detail', slug=product.slug)
