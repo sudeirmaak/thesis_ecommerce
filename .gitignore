@@ -2,5 +2,7 @@ venv/
 db.sqlite3
 *.pyc
 __pycache__/
-.DS_Store.env
+.DS_Store
 dataset.csv
+.env
+
