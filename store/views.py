@@ -11,6 +11,11 @@ from users.models import Address
 from .forms import CheckoutForm, ReviewForm
 from decimal import Decimal
 from datetime import timedelta
+from django.conf import settings
+from django.urls import reverse
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+import stripe
 
 class HomeView(TemplateView):
     template_name = 'store/home.html'
@@ -323,16 +328,13 @@ class CheckoutView(LoginRequiredMixin, View):
         if form.is_valid():
             order = form.save(commit=False)
             order.user = request.user
-
-            if order.shipping_method == 'express':
-                order.shipping_cost = Decimal(15.00)
-            else:
-                order.shipping_cost = Decimal(5.00)
-
+            order.shipping_cost = Decimal('15.00') if order.shipping_method == 'express' else Decimal('5.00')
             grand_total = total_price + order.shipping_cost
-
             order.total_amount = grand_total
             order.save()
+
+            stripe.api_key = settings.STRIPE_SECRET_KEY
+            line_items = []
 
             for item in cart_items:
                 OrderItem.objects.create(
@@ -342,29 +344,47 @@ class CheckoutView(LoginRequiredMixin, View):
                     quantity = item.quantity,
                     size = item.size,
                     grind = item.grind,
-                    purchase_option = item.purchase_option
+                    purchase_option = item.purchase_option,
+                    frequency = item.frequency
                 )
 
-                if item.purchase_option == 'subscribe':
-                    days_to_add = 7 if item.frequency == 'W' else 30
-                    next_date = timezone.now().date() + timedelta(days=days_to_add)
+                line_items.append({
+                    'price_data': {
+                        'currency': 'usd',
+                        'unit_amount': int(item.get_unit_price() * 100),
+                        'product_data': {
+                            'name': f"{item.product.name} ({item.size} - {item.grind})",
+                        },
+                    },
+                    'quantity': item.quantity,
+                })
 
-                    Subscription.objects.create(
-                        user = request.user,
-                        original_order = order,
-                        product = item.product,
-                        quantity = item.quantity,
-                        size = item.size,
-                        grind = item.grind,
-                        price_locked = item.get_unit_price(),
-                        status = 'A',
-                        frequency = item.frequency,
-                        next_delivery_date = next_date
-                    )
+            line_items.append({
+                'price_data': {
+                    'currency': 'usd',
+                    'unit_amount': int(order.shipping_cost * 100),
+                    'product_data': {
+                        'name': 'Shipping',
+                    },
+                },
+                'quantity': 1,
+            })
 
-            cart.cartitem_set.all().delete()
-
-            return redirect('order_success', order_id = order.id)
+            try:
+                checkout_session = stripe.checkout.Session.create(
+                    payment_method_types=['card'],
+                    line_items=line_items,
+                    mode='payment',
+                    customer_email=order.email,
+                    client_reference_id=order.id, # Critical: Ties Stripe back to your database!
+                    success_url=request.build_absolute_uri(reverse('order_success', args=[order.id])),
+                    cancel_url=request.build_absolute_uri(reverse('cart_summary')),
+                )
+                return redirect(checkout_session.url, code=303)
+            
+            except Exception as e:
+                messages.error(request, "There was an error connecting to the payment processor. Please try again.")
+                return redirect('cart_summary')
         
         context = {
             'form': form,
@@ -404,3 +424,60 @@ def submit_review(request, product_id):
             messages.success(request, "Thank you for your review!")
 
     return redirect('product_detail', slug=product.slug)
+
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError as e:
+        # Invalid payload
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        # Invalid signature (Hack attempt!)
+        return HttpResponse(status=400)
+
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        
+        order_id = session.client_reference_id
+
+        if order_id:
+            try:
+                order = Order.objects.get(id=order_id)
+                
+                order.status = 'A'
+                order.save()
+
+                for item in order.items.all():
+                    if item.purchase_option == 'subscribe':
+                        days_to_add = 7 if item.frequency == 'W' else 30
+                        next_date = timezone.now().date() + timedelta(days=days_to_add)
+
+                        Subscription.objects.create(
+                            user=order.user,
+                            original_order=order,
+                            product=item.product,
+                            quantity=item.quantity,
+                            size=item.size,
+                            grind=item.grind,
+                            price_locked=item.price,
+                            status='A',
+                            frequency=item.frequency,
+                            next_delivery_date=next_date
+                        )
+
+                if order.user:
+                    cart = Cart.objects.filter(user=order.user).first()
+                    if cart:
+                        cart.cartitem_set.all().delete()
+
+            except Order.DoesNotExist:
+                pass 
+
+    return HttpResponse(status=200)
