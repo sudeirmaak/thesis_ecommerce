@@ -385,8 +385,10 @@ def order_success(request, order_id):
 
 @login_required(login_url='users:login')
 def submit_review(request, product_id):
+
+    product = get_object_or_404(Product, id=product_id)
+
     if request.method == 'POST':
-        product = get_object_or_404(product, id=product_id)
 
         if Review.objects.filter(user=request.user, product=product).exists():
             messages.warning(request, "You have already reviewed this product.")

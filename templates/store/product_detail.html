@@ -15,13 +15,19 @@
         </div>
         <div class="col-md-6 mb-5 mb-md-0">
             <h1>{{ product.name }}</h1>
-            <!-- Dummy Stars for now-->
-            <i class="bi bi-star-fill text-warning"></i>
-            <i class="bi bi-star-fill text-warning"></i>
-            <i class="bi bi-star-fill text-warning"></i>
-            <i class="bi bi-star-fill text-warning"></i>
-            <i class="bi bi-star-half text-warning"></i>
-            <span class="ms-2">4.5 (124 reviews)</span>
+            <div class="mb-3 d-flex align-items-center">
+
+                {% with rating=product.get_average_rating %}
+                    <i class="bi text-warning fs-5 {% if rating >= 1 %}bi-star-fill{% elif rating >= 0.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                    <i class="bi text-warning fs-5 {% if rating >= 2 %}bi-star-fill{% elif rating >= 1.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                    <i class="bi text-warning fs-5 {% if rating >= 3 %}bi-star-fill{% elif rating >= 2.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                    <i class="bi text-warning fs-5 {% if rating >= 4 %}bi-star-fill{% elif rating >= 3.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                    <i class="bi text-warning fs-5 {% if rating >= 4.8 %}bi-star-fill{% elif rating >= 4.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                {% endwith %}
+                
+                <span class="ms-2 fs-5 fw-bold">{{ product.get_average_rating }}</span>
+                <span class="ms-2 text-muted">({{ product.get_review_count }} reviews)</span>
+            </div>
 
             <h2 id="display-price" data-base-price="{{ product.price }}">${{ product.price }}</h2>
 
@@ -91,6 +97,149 @@
         </div>
     </div>
 </div>
+
+<div class="row mt-5 pt-5 border-top">
+        <div class="col-12">
+            
+            <div class="text-center mb-5">
+                <h5 class="fw-bold mb-3">About this Coffee:</h5>
+                <p class="text-muted w-75 mx-auto">
+                    {% if product.tasting_notes %}
+                        <strong>Tasting Notes:</strong> {{ product.tasting_notes }}<br><br>
+                    {% endif %}
+                    {{ product.description }}
+                </p>
+            </div>
+
+            <hr class="w-75 mx-auto text-muted opacity-25">
+
+            <div class="row text-center my-4">
+
+                <div class="col-6 border-end border-secondary border-opacity-25">
+                    <span class="text-muted small text-uppercase tracking-widest">Origin</span><br>
+                    <strong class="fs-5">{{ product.origin|default:"Blend" }}</strong>
+                </div>
+
+                <div class="col-6">
+                    <span class="text-muted small text-uppercase tracking-widest">Roast Level</span><br>
+                    <strong class="fs-5">{{ product.roast_level|default:"Medium" }}</strong>
+                </div>
+
+            </div>
+
+            <hr class="w-75 mx-auto text-muted opacity-25 mb-5">
+
+            {% if product.brewing_instructions %}
+            <div class="text-center">
+                <h5 class="fw-bold mb-3">Instructions:</h5>
+                <div class="text-muted d-inline-block text-start" style="max-width: 600px;">
+                    {{ product.brewing_instructions|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    {% if recommended_products %}
+    <div class="row mt-5 pt-5 border-top border-dark border-opacity-10">
+
+        <div class="col-12 text-center mb-4">
+            <h5 class="fw-bold text-uppercase tracking-widest">You May Also Like</h5>
+        </div>
+        
+        <div class="col-12 px-2 px-md-5">
+            <div class="row row-cols-2 row-cols-md-4 g-4 justify-content-center">
+                {% for rec_product in recommended_products %}
+                <div class="col">
+                    <a href="{% url 'product_detail' rec_product.slug %}" class="text-decoration-none text-dark">
+                        <div class="card h-100 border-dark border-opacity-25 rounded-4 overflow-hidden bg-transparent shadow-none">
+                            {% if rec_product.image %}
+                                <img src="{{ rec_product.image.url }}" class="card-img-top w-100 object-fit-cover border-bottom border-dark border-opacity-25" style="aspect-ratio: 1/1;">
+                            {% endif %}
+                            <div class="card-body text-center p-3">
+                                <h6 class="fw-bold mb-1 text-truncate" style="font-size: 0.9rem;">{{ rec_product.name }}</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+    </div>
+    {% endif %}
+
+
+    <div class="row mt-5 pt-5 border-top border-dark border-opacity-10 mb-5">
+        <div class="col-12 px-md-5">
+            
+            <div class="row align-items-center mb-5">
+                <div class="col-md-6 text-center text-md-start mb-4 mb-md-0">
+                    <h5 class="fw-bold mb-3">Reviews:</h5>
+                    <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                        <h1 class="display-5 fw-bold mb-0 me-3">{{ product.get_average_rating }}</h1>
+                        <div class="text-dark">
+                            {% with rating=product.get_average_rating %}
+                                <i class="bi text-warning {% if rating >= 1 %}bi-star-fill{% elif rating >= 0.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                                <i class="bi text-warning {% if rating >= 2 %}bi-star-fill{% elif rating >= 1.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                                <i class="bi text-warning {% if rating >= 3 %}bi-star-fill{% elif rating >= 2.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                                <i class="bi text-warning {% if rating >= 4 %}bi-star-fill{% elif rating >= 3.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                                <i class="bi text-warning {% if rating >= 4.8 %}bi-star-fill{% elif rating >= 4.5 %}bi-star-half{% else %}bi-star{% endif %}"></i>
+                            {% endwith %}
+                            <div class="text-muted small mt-1">Overall Rating ({{ product.get_review_count }} reviews)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 text-center text-md-end">
+                    {% if user.is_authenticated %}
+                        <p class="text-muted small mb-2">Provide a review:</p>
+                        <button class="btn btn-outline-dark rounded-pill px-4" type="button" data-bs-toggle="collapse" data-bs-target="#reviewFormCollapse">
+                            Write a Review
+                        </button>
+                    {% else %}
+                        <div class="alert alert-light border text-center d-inline-block py-2">
+                            Please <a href="{% url 'users:login' %}?next={{ request.path }}" class="fw-bold text-dark">log in</a> to write a review.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="collapse mb-5" id="reviewFormCollapse">
+                <div class="card border-dark shadow-sm bg-white rounded-4">
+                    <div class="card-body p-4 text-start">
+                        <form action="{% url 'submit_review' product.id %}" method="POST">
+                            {% csrf_token %}
+                            {{ review_form.as_p }}
+                            <button type="submit" class="btn btn-dark fw-bold px-4 rounded-pill mt-2">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="mb-4">
+
+            <div class="review-list">
+                {% if product.reviews.all %}
+                    {% for review in product.reviews.all %}
+                        <div class="mb-4 pb-4 border-bottom border-light">
+                            <h6 class="fw-bold mb-1">{{ review.user.first_name|default:review.user.username }}</h6>
+                            <div class="text-dark mb-2 small">
+                                {% for i in "12345"|make_list %}
+                                    <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                            <p class="text-muted mb-0" style="font-size: 0.95rem;">{{ review.comment }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted text-center py-4">No reviews yet.</p>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

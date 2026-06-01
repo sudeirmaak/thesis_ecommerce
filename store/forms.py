@@ -31,12 +31,23 @@ class CheckoutForm(forms.ModelForm):
         }
 
 class ReviewForm(forms.ModelForm):
+
+    rating = forms.ChoiceField(
+            choices=[
+                (5, '⭐⭐⭐⭐⭐ (5 - Excellent)'),
+                (4, '⭐⭐⭐⭐ (4 - Good)'),
+                (3, '⭐⭐⭐ (3 - Average)'),
+                (2, '⭐⭐ (2 - Poor)'),
+                (1, '⭐ (1 - Terrible)')
+            ],
+            widget=forms.Select(attrs={'class': 'form-select border-dark w-auto mb-3'})
+        )
+
     class Meta:
         model = Review
         fields = ['rating', 'comment']
 
         widgets = {
-            'rating': forms.Select(attrs={'class': 'form-select border-dark w-auto mb-3'}),
             'comment': forms.Textarea(attrs={'class': 'form-control border-dark',
                                              'rows': 4,
                                              'placeholder': 'Share you thoughts...'}),
