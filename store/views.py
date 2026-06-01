@@ -9,6 +9,7 @@ from django.db.models import Q
 from .models import Product, Category, Cart, CartItem, Order, OrderItem, Subscription, Review
 from users.models import Address
 from .forms import CheckoutForm, ReviewForm
+from .recommender import get_recommendations
 from decimal import Decimal
 from datetime import timedelta
 from django.conf import settings
@@ -50,8 +51,14 @@ class ProductDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['review_form'] = ReviewForm()
-        context['recommended_products'] = Product.objects.filter(
-            category=self.object.category).exclude(id=self.object.id)[:4] #replace when scikit
+
+        current_product = self.object 
+        recommended = get_recommendations(current_product.id, top_n=4)
+
+        if not recommended:
+            recommended = Product.objects.filter(category=current_product.category).exclude(id=current_product.id).order_by('?')[:4]
+
+        context['recommended_products'] = recommended
         return context  
 
 class CategoryView(ListView):
