@@ -72,6 +72,7 @@
                     </div>
 
                 {% else %}
+
                     <input type="hidden" name="size" value="">
                     <input type="hidden" name="grind" value="">
                     <input type="hidden" name="purchase" value="one_time">
@@ -98,7 +99,8 @@
     </div>
 </div>
 
-<div class="row mt-5 pt-5 border-top">
+<div class="container">
+    <div class="row mt-5 pt-5 border-top">
         <div class="col-12">
             
             <div class="text-center mb-5">
@@ -136,7 +138,7 @@
             {% endif %}
 
             {% if product.brewing_instructions %}
-            <div class="text-center">
+            <div class="text-center mb-5 pb-3">
                 <h5 class="fw-bold mb-3">Instructions:</h5>
                 <div class="text-muted d-inline-block text-start" style="max-width: 600px;">
                     {{ product.brewing_instructions|linebreaks }}
@@ -146,8 +148,10 @@
 
         </div>
     </div>
+</div>
 
-    {% if recommended_products %}
+{% if recommended_products %}
+<div class="container">
     <div class="row mt-5 pt-5 border-top border-dark border-opacity-10">
 
         <div class="col-12 text-center mb-4">
@@ -174,9 +178,10 @@
         </div>
         
     </div>
-    {% endif %}
+</div>
+{% endif %}
 
-
+<div class="container">
     <div class="row mt-5 pt-5 border-top border-dark border-opacity-10 mb-5">
         <div class="col-12 px-md-5">
             
@@ -246,6 +251,7 @@
 
         </div>
     </div>
+</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
