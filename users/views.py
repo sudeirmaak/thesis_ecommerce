@@ -128,6 +128,7 @@ class OrderDetailView(LoginRequiredMixin, TemplateView):
         return context
     
 class CustomPasswordChangeView(auth_views.PasswordChangeView):
+    login_url = 'users:login'
     template_name = 'users/change_password.html'
     success_url = reverse_lazy('users:settings')
     

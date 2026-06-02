@@ -106,8 +106,13 @@ def add_to_cart(request, product_id):
         size = request.POST.get('size')
         grind = request.POST.get('grind')
         purchase_option = request.POST.get('purchase')
-        quantity = int(request.POST.get('quantity', 1))
         frequency = request.POST.get('frequency')
+        try:
+            quantity = int(request.POST.get('quantity', 1))
+            if quantity < 1:
+                quantity = 1
+        except (ValueError, TypeError):
+            quantity = 1
 
         if request.user.is_authenticated:
             cart, created = Cart.objects.get_or_create(user = request.user)
@@ -240,10 +245,12 @@ def update_cart(request, item_id):
     if request.method == 'POST':
         try:
             quantity = int(request.POST.get('quantity'))
-            if quantity < 1:
-                quantity = 1
+            if quantity <= 0:
+                messages.error(request, "Quantity must be at least 1.")
+                return redirect('cart_summary')
         except(ValueError, TypeError):
-            quantity = 1
+            messages.error(request, "Invalid quantity provided.")
+            return redirect('cart_summary')
             
         if request.user.is_authenticated:
             item = CartItem.objects.filter(id=item_id, cart__user=request.user).first()
@@ -401,6 +408,7 @@ class CheckoutView(LoginRequiredMixin, View):
 
         return render(request, 'store/checkout.html', context)
     
+@login_required(login_url='users:login')
 def order_success(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
 
