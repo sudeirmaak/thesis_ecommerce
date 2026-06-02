@@ -53,10 +53,10 @@ class ProductDetailView(DetailView):
         context['review_form'] = ReviewForm()
 
         current_product = self.object 
-        recommended = get_recommendations(current_product.id, top_n=4)
+        recommended = get_recommendations(current_product.id, top_n=7)
 
         if not recommended:
-            recommended = Product.objects.filter(category=current_product.category).exclude(id=current_product.id).order_by('?')[:4]
+            recommended = Product.objects.filter(category=current_product.category).exclude(id=current_product.id).order_by('?')[:7]
 
         context['recommended_products'] = recommended
         return context  
@@ -383,7 +383,7 @@ class CheckoutView(LoginRequiredMixin, View):
                     line_items=line_items,
                     mode='payment',
                     customer_email=order.email,
-                    client_reference_id=order.id, # Critical: Ties Stripe back to your database!
+                    client_reference_id=order.id,
                     success_url=request.build_absolute_uri(reverse('order_success', args=[order.id])),
                     cancel_url=request.build_absolute_uri(reverse('cart_summary')),
                 )

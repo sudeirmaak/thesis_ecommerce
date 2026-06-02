@@ -18,18 +18,9 @@ ul {padding: 0; list-style: none;}
     }
 
 .navbar-brand {
-    margin: 0 auto;
-    text-align: center;
-    transform: translateX(-20px);
+    margin: 0;
+    padding: 0;
     }
-
-@media (min-width: 992px) {
-    .navbar-brand {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-}
 
 .navbar {
     background-color: #FFF4E8 !important;
@@ -305,4 +296,26 @@ input[type="number"] {
 
 .small-btn-text {
     font-size: 0.75rem;
+}
+
+@media (max-width: 991px) {
+    .mobile-balance {
+        flex: 1 1 0% !important;
+    }
+}
+
+.carousel-card {
+    width: 42%; 
+}
+
+@media (min-width: 768px) {
+    .carousel-card {
+        width: 29%; 
+    }
+}
+
+@media (min-width: 992px) {
+    .carousel-card {
+        width: 16%; 
+    }
 }

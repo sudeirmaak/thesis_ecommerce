@@ -23,7 +23,7 @@ tfidf_matrix = tfidf.fit_transform(df['combined_features'])
 cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
 indices = pd.Series(df.index, index=df['name']).drop_duplicates()
 
-def get_recommendations(title, cosine_sim=cosine_sim, top_n=4):
+def get_recommendations(title, cosine_sim=cosine_sim, top_n=7):
     try:
         idx = indices[title]
         sim_scores = list(enumerate(cosine_sim[idx]))

@@ -151,23 +151,31 @@
 </div>
 
 {% if recommended_products %}
-<div class="container">
-    <div class="row mt-5 pt-5 border-top border-dark border-opacity-10">
+<div class="container mb-5">    
+    <div class="row mt-5 pt-5 border-top border-dark border-opacity-10 position-relative">
 
-        <div class="col-12 text-center mb-4">
-            <h5 class="fw-bold text-uppercase tracking-widest">You May Also Like</h5>
+        <div class="col-12 d-flex justify-content-between align-items-center mb-4 px-3 px-md-0">
+            <h5 class="fw-bold text-uppercase tracking-widest mb-0">You May Also Like</h5>
+            <div class="d-none d-lg-flex gap-2">
+                <button class="btn btn-outline-dark rounded-circle d-flex align-items-center justify-content-center" id="scrollLeftBtn" style="width: 40px; height: 40px;">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="btn btn-outline-dark rounded-circle d-flex align-items-center justify-content-center" id="scrollRightBtn" style="width: 40px; height: 40px;">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
         </div>
         
-        <div class="col-12 px-2 px-md-5">
-            <div class="row row-cols-2 row-cols-md-4 g-4 justify-content-center">
+        <div class="col-12 px-0">
+            <div class="row flex-nowrap overflow-auto hide-scrollbar g-3 px-3 px-md-0 m-0" id="recommendationsScroll" style="scroll-behavior: smooth; scroll-snap-type: x mandatory;">
                 {% for rec_product in recommended_products %}
-                <div class="col">
+                <div class="carousel-card flex-shrink-0" style="scroll-snap-align: start;">
                     <a href="{% url 'product_detail' rec_product.slug %}" class="text-decoration-none text-dark">
-                        <div class="card h-100 border-dark border-opacity-25 rounded-4 overflow-hidden bg-transparent shadow-none">
+                        <div class="card h-100 border-dark border-opacity-25 rounded-4 overflow-hidden bg-transparent shadow-none product-premium-card custom-transition">
                             {% if rec_product.image %}
-                                <img src="{{ rec_product.image.url }}" class="card-img-top w-100 object-fit-cover border-bottom border-dark border-opacity-25" style="aspect-ratio: 1/1;">
+                                <img src="{{ rec_product.image.url }}" class="card-img-top w-100 object-fit-cover border-bottom border-dark border-opacity-25 card-img-hover custom-transition" style="aspect-ratio: 1/1;">
                             {% endif %}
-                            <div class="card-body text-center p-3">
+                            <div class="card-body text-center p-2 p-md-3">
                                 <h6 class="fw-bold mb-1 text-truncate" style="font-size: 0.9rem;">{{ rec_product.name }}</h6>
                             </div>
                         </div>
@@ -179,6 +187,24 @@
         
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const scrollContainer = document.getElementById('recommendationsScroll');
+        const leftBtn = document.getElementById('scrollLeftBtn');
+        const rightBtn = document.getElementById('scrollRightBtn');
+
+        if(leftBtn && rightBtn && scrollContainer) {
+            leftBtn.addEventListener('click', () => {
+                scrollContainer.scrollBy({ left: -400, behavior: 'smooth' });
+            });
+            rightBtn.addEventListener('click', () => {
+                scrollContainer.scrollBy({ left: 400, behavior: 'smooth' });
+            });
+        }
+    });
+</script>
+
 {% endif %}
 
 <div class="container">

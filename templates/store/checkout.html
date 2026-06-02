@@ -11,7 +11,7 @@
 
 <div class="container py-4">
     <div class="row">
-        <div class="col-md-8 mb-4">
+        <div class="col-lg-8 mx-auto mb-4">
             <div class="d-flex align-items-center mb-4">
                 <a href="{% url 'cart_summary' %}" class="text-dark me-3">
                     <i class="bi bi-arrow-left fs-3"></i>
@@ -25,9 +25,9 @@
                 {% if user_addresses %}
                 <div class="mb-4">
                     <h5 class="fw-bold mb-3">Saved Addresses</h5>
-                    <div class="d-flex gap-3 overflow-x-auto pb-2 hide-scrollbar">
-                        {% for addr in user_addresses %}
-                        <div class="flex-shrink-0" style="width: 280px;">
+                    <div class="row g-3">
+                        {% for addr in user_addresses|slice:":3" %}
+                        <div class="col-12 col-md-6">
 
                             <input type="radio" class="btn-check address-selector" name="address_preset" id="preset_{{ addr.id }}" autocomplete="off"
                                 {% if addr.is_default %}checked{% endif %}

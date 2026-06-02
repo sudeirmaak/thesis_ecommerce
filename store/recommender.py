@@ -3,7 +3,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from .models import Product
 
-def get_recommendations(product_id, top_n=4):
+def get_recommendations(product_id, top_n=7):
     products = Product.objects.exclude(category__slug='brewing-equipment')
 
     if products.count() <= 1:
