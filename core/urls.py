@@ -18,11 +18,14 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
+#from django.shortcuts import render
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('store.urls')),
-    path('users/', include('users.urls'))
+    path('users/', include('users.urls')),
+    #path('test-500/', lambda request: render(request, '500.html')),
+    #path('test-404/', lambda request: render(request, '404.html')),
 ]
 
 if settings.DEBUG:
