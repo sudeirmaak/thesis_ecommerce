@@ -47,7 +47,7 @@
                 <a class="nav-link fs-3 p-0 position-relative text-dark" href="{% url 'cart_summary' %}">
                     <i class="bi bi-cart"></i>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark cart-badge">
-                        {{ cart_count|default:"0"}}
+                        {{ cart_count|default:"0" }}
                     </span> 
                 </a>
             </div>
@@ -69,8 +69,9 @@
         <div class="container">
             <nav class="nav justify-content-center py-2 small fw-bold text-uppercase" style="letter-spacing: 1px;">
 
-                <a class="nav-link category-link {% if request.resolver_match.url_name == 'product_list' %}active-category{% endif %} px-4" 
-                    href="{% url 'product_list' %}">All</a>
+                <a class="nav-link category-link {% if not current_category %}active-category{% endif %} px-4" href="{% url 'product_list' %}">
+                    All
+                </a>
 
                 {% for category in categories %}
                     <a class="nav-link category-link {% if current_category.slug == category.slug %}active-category{% endif %} px-4" href="{% url 'category_products' category.slug %}">{{ category.name }}</a>
@@ -143,13 +144,13 @@
                     <h4 class="footer-heading">Support</h4>
                     <ul>
                         <li>
-                            <a href="/shipping-returns">Shipping & Returns</a>
+                            <a href="javascript:void(0);" onclick="alert('This informational page is outside the scope of the current MVP.');" class="text-white">Shipping & Returns</a>
                         </li>
                         <li>
-                            <a href="/order-status">Order Status</a>
+                            <a href="{% url 'users:orders' %}">Order Status</a>
                         </li>
                         <li>
-                            <a href="/faq">FAQs</a>
+                            <a href="javascript:void(0);" onclick="alert('This informational page is outside the scope of the current MVP.');" class="text-white">FAQs</a>
                         </li>
                     </ul>
                 </div>
@@ -158,10 +159,10 @@
                     <h4 class="footer-heading">Company</h4>
                     <ul>
                         <li>
-                            <a href="/about">About Us</a>
+                            <a href="javascript:void(0);" onclick="alert('This informational page is outside the scope of the current MVP.');" class="text-white">About Us</a>
                         </li>
                         <li>
-                            <a href="/careers">Careers</a>
+                            <a href="javascript:void(0);" onclick="alert('This informational page is outside the scope of the current MVP.');" class="text-white">Careers</a>
                         </li>
                     </ul>
                 </div>
@@ -173,10 +174,10 @@
     <div class="bottom-footer">
         <div class="container text-center">
             <div class="bottom-links">
-                <a href="/privacy">Privacy Policy</a>
-                <a href="/terms">Terms of Use</a>
+                <a href="javascript:void(0);" onclick="alert('This informational page is outside the scope of the current MVP.');" class="text-white">Privacy Policy</a>
+                <a href="javascript:void(0);" onclick="alert('This informational page is outside the scope of the current MVP.');" class="text-white">Terms of Use</a>
             </div>
-            <div class="opacity-80">&copy; 2026 Dibek Coffee. Designed and Built for Thesis Purposes</div>
+            <div class="opacity-80">&copy; {% now "Y" %} Dibek Coffee. Designed and Built for Thesis Purposes</div>
         </div>
     </div>
 
@@ -187,7 +188,7 @@
             let alerts = document.querySelectorAll('.alert');
             alerts.forEach(function(alert) {
                 let bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close()
+                bsAlert.close();
             })
         }, 5000);
     </script>   

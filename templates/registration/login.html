@@ -71,7 +71,7 @@
         const input = button.previousElementSibling;
         const icon = button.querySelector('i');
 
-        if (input.type == 'password') {
+        if (input.type === 'password') {
             input.type = 'text';
             icon.classList.replace('bi-eye', 'bi-eye-slash');
         } else {

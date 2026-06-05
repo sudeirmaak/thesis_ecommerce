@@ -18,6 +18,8 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import stripe
 
+# store front and catalog views
+
 class HomeView(TemplateView):
     template_name = 'store/home.html'
 
@@ -78,7 +80,7 @@ class CategoryView(ListView):
     
 class SearchView(ListView):
     model = Product
-    template_name = 'store/product.list.html'
+    template_name = 'store/product_list.html'
     context_object_name = 'products'
 
     def get_queryset(self):
@@ -86,9 +88,9 @@ class SearchView(ListView):
 
         if query:
             return Product.objects.filter(
-                Q(name__icontains = query) |
-                Q(description__icontains = query) |
-                Q(tags__icontains = query) |
+                Q(name__icontains=query) |
+                Q(description__icontains=query) |
+                Q(tags__icontains=query) |
                 Q(category__name__icontains=query)
             ).distinct()
         
@@ -100,9 +102,11 @@ class SearchView(ListView):
         context['current_category'] = None
         return context
 
+# cart management views
+
 def add_to_cart(request, product_id):
     if request.method == 'POST':
-        product = get_object_or_404(Product, id= product_id)
+        product = get_object_or_404(Product, id=product_id)
         size = request.POST.get('size')
         grind = request.POST.get('grind')
         purchase_option = request.POST.get('purchase')
@@ -115,7 +119,7 @@ def add_to_cart(request, product_id):
             quantity = 1
 
         if request.user.is_authenticated:
-            cart, created = Cart.objects.get_or_create(user = request.user)
+            cart, created = Cart.objects.get_or_create(user=request.user)
 
             cart_item, item_created = CartItem.objects.get_or_create(
                 cart = cart,
@@ -190,8 +194,8 @@ def cart_summary(request):
     else:
         cart_session = request.session.get('cart', {})
 
-        for key , item_data in cart_session.items():
-            product = get_object_or_404(Product, id= item_data['product_id'])
+        for key, item_data in cart_session.items():
+            product = get_object_or_404(Product, id=item_data['product_id'])
 
             size_price = product.get_size_price(item_data['size'])
 
@@ -248,7 +252,7 @@ def update_cart(request, item_id):
             if quantity <= 0:
                 messages.error(request, "Quantity must be at least 1.")
                 return redirect('cart_summary')
-        except(ValueError, TypeError):
+        except (ValueError, TypeError):
             messages.error(request, "Invalid quantity provided.")
             return redirect('cart_summary')
             
@@ -266,6 +270,8 @@ def update_cart(request, item_id):
                 request.session.modified = True
 
     return redirect('cart_summary')
+
+# checkout and reviews 
 
 class CheckoutView(LoginRequiredMixin, View):
     login_url = 'users:login'
@@ -294,6 +300,7 @@ class CheckoutView(LoginRequiredMixin, View):
 
         if default_address:
             initial_data.update({
+
                 'first_name':default_address.first_name,
                 'last_name':default_address.last_name,
                 'phone_number':default_address.phone_number,
@@ -303,7 +310,7 @@ class CheckoutView(LoginRequiredMixin, View):
                 'country':default_address.country,
             })
         else:
-            initial_data.update ({
+            initial_data.update({
                 'first_name': request.user.first_name,
                 'last_name': request.user.last_name,
                 'phone_number': request.user.phone_number,
@@ -439,6 +446,8 @@ def submit_review(request, product_id):
             messages.success(request, "Thank you for your review!")
 
     return redirect('product_detail', slug=product.slug)
+
+# webhook
 
 @csrf_exempt
 def stripe_webhook(request):

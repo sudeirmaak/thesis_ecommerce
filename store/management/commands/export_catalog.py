@@ -8,9 +8,11 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         filename = 'dataset.csv'
 
-        with open(filename, mode='w', newline='', encoding='utf-8') as file:
+        # safely close even if an error occurs
+        with open(filename, mode='w', newline='', encoding='utf-8') as file: #prevent blank rows
             writer = csv.writer(file)
             
+            # csv headers 
             writer.writerow([
                 'product_id', 
                 'name', 
@@ -22,9 +24,12 @@ class Command(BaseCommand):
                 'tasting_notes'
             ])
 
-            products = Product.objects.exclude(category__slug='brewing-equipment')
+            # important! to prevent the n+1 quesy problem
+            # fetch all catogory names in a single db hit
+            products = Product.objects.exclude(category__slug='brewing-equipment').select_related('category')
             count = 0
 
+            #itrate through the queryset and write data row by row
             for product in products:
                 writer.writerow([
                     product.id,

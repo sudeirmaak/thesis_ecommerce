@@ -7,7 +7,7 @@ def get_recommendations(product_id, top_n=7):
     products = Product.objects.exclude(category__slug='brewing-equipment')
 
     if products.count() <= 1:
-        return[]
+        return []
     
     df = pd.DataFrame(list(products.values('id', 'name', 'description', 'tags', 'origin', 'roast_level', 'tasting_notes')))
     features = ['description', 'tags', 'origin', 'roast_level', 'tasting_notes']
@@ -42,12 +42,11 @@ def get_recommendations(product_id, top_n=7):
     product_indices = [i[0] for i in sim_scores]
     recommended_ids = df['id'].iloc[product_indices].tolist()
 
-    recommended_products = []
+    unordered_products = Product.objects.filter(id__in=recommended_ids)
+    products_dict = {product.id: product for product in unordered_products}
 
-    for rid in recommended_ids:
-        try:
-            recommended_products.append(Product.objects.get(id=rid))
-        except Product.DoesNotExist:
-            continue
+    recommended_products = [
+        products_dict[rid] for rid in recommended_ids if rid in products_dict
+    ]
 
     return recommended_products

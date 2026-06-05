@@ -77,15 +77,19 @@ class Product(models.Model):
         return round(size_price, 2)
     
     def get_average_rating(self):
-        reviews = self.reviews.all()
+        result = self.reviews.aggregate(average=models.Avg('rating'))
         
-        if reviews:
-            total = sum(review.rating for review in reviews)
-            return round(total / len(reviews), 1)
+        if result['average'] is not None:
+            return round(result['average'], 1)
         return 0.0
     
     def get_review_count(self):
         return self.reviews.count()
+    
+    def get_tags_list(self):
+        if self.tags:
+            return [tag.strip() for tag in self.tags.split(',')]
+        return []
 
 class Cart(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -167,7 +171,7 @@ class Subscription(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     size = models.CharField(max_length=50, blank=True)
     grind = models.CharField(max_length=50, blank=True)
-    price_locked =models.DecimalField(max_digits=7, decimal_places=2, help_text="The 10% discounted price locked in at purchase")
+    price_locked = models.DecimalField(max_digits=7, decimal_places=2, help_text="The 10% discounted price locked in at purchase")
     status = models.CharField(max_length=1, choices=STATUS_CHOICES_SUBSCRIPTION, default="A")
     frequency = models.CharField(max_length=1, choices=FREQUENCY_CHOICES_SUBSCRIPTION, default="W")
     next_delivery_date = models.DateField(null=True, blank=True)

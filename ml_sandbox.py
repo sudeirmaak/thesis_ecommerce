@@ -6,7 +6,7 @@ df = pd.read_csv('dataset.csv')
 features = ['description', 'tags', 'origin', 'roast_level', 'tasting_notes']
 
 for feature in features:
-    df[feature] = df[feature].fillna('')
+    df[feature] = df[feature].fillna('').astype(str)
 
 def create_soup(x):
     return (x['description'] + ' ' + 
@@ -26,6 +26,10 @@ indices = pd.Series(df.index, index=df['name']).drop_duplicates()
 def get_recommendations(title, cosine_sim=cosine_sim, top_n=7):
     try:
         idx = indices[title]
+
+        if isinstance(idx, pd.Series):
+            idx = idx.iloc[0]
+
         sim_scores = list(enumerate(cosine_sim[idx]))
         sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
         sim_scores = sim_scores[1:top_n+1]
@@ -41,6 +45,5 @@ def get_recommendations(title, cosine_sim=cosine_sim, top_n=7):
     except KeyError:
         print("not found in dataset")
         
-
 test_coffee_name = df['name'].iloc[0]
 get_recommendations(test_coffee_name) 

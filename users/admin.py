@@ -14,3 +14,4 @@ class CustomUserAdmin(UserAdmin):
 class AddressAdmin(admin.ModelAdmin):
     list_display = ('name', 'user', 'city', 'country', 'is_default')
     list_filter = ('is_default', 'country')
+    search_fields = ('user__username', 'user__email', 'city', 'name')

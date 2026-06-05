@@ -24,7 +24,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('store.urls')),
     path('users/', include('users.urls')),
-    #path('test-500/', lambda request: render(request, '500.html')),
+
+    #edge case handling - 404 and 500 error pages tests
+    #path('test-500/', lambda request: render(request, '500.html')), 
     #path('test-404/', lambda request: render(request, '404.html')),
 ]
 

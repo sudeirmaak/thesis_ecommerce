@@ -14,6 +14,7 @@ from .forms import CustomUserCreationForm, CustomLoginForm, CustomUserUpdateForm
 from .models import Address
 from datetime import timedelta
 
+# auth views 
 
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
@@ -23,7 +24,7 @@ class SignUpView(CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
 
-        login(self.request, self.object, backend='django.contrib.auth.backends.ModelBackend')
+        login(self.request, self.object, backend='users.backends.EmailOrUsernameModelBackend')
 
         return response
 
@@ -38,28 +39,44 @@ class CustomLoginView(LoginView):
             cart, created = Cart.objects.get_or_create(user=self.request.user)
 
             for key, item_data in cart_session.items():
-                product = Product.objects.get(id=item_data['product_id'])
 
-                cart_item, item_created = CartItem.objects.get_or_create(
-                    cart = cart,
-                    product = product,
-                    size = item_data['size'],
-                    grind = item_data['grind'],
-                    purchase_option = item_data['purchase_option'],
-                    frequency = item_data.get('frequency')
-                )
+                try: 
+                    product = Product.objects.get(id=item_data['product_id'])
 
-                if not item_created:
-                    cart_item.quantity += item_data['quantity']
-                else:
-                    cart_item.quantity = item_data['quantity']
+                    cart_item, item_created = CartItem.objects.get_or_create(
+                        cart=cart,
+                        product=product,
+                        size=item_data['size'],
+                        grind=item_data['grind'],
+                        purchase_option=item_data['purchase_option'],
+                        frequency=item_data.get('frequency')
+                    )
 
-                cart_item.save()
+                    if not item_created:
+                        cart_item.quantity += item_data['quantity']
+                    else:
+                        cart_item.quantity = item_data['quantity']
+
+                    cart_item.save()
+                
+                except Product.DoesNotExist:
+                    continue
 
             del self.request.session['cart']
             self.request.session.modified = True
 
         return response
+    
+class CustomPasswordChangeView(auth_views.PasswordChangeView):
+    login_url = 'users:login'
+    template_name = 'users/change_password.html'
+    success_url = reverse_lazy('users:settings')
+    
+    def form_valid(self, form):
+        messages.success(self.request, "Your password has been updated successfully!")
+        return super().form_valid(form)
+    
+# user views
     
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'users/profile.html'
@@ -74,6 +91,22 @@ class OrdersView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         context['orders'] = Order.objects.filter(user=self.request.user).order_by('-created_at')
+
+        return context
+
+class OrderDetailView(LoginRequiredMixin, TemplateView):
+    template_name = 'users/order_detail.html'
+    login_url = 'users:login'
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+
+        order_id = self.kwargs.get('order_id')
+
+        order = get_object_or_404(Order, id=order_id, user=self.request.user)
+
+        context['order'] = order
 
         return context
 
@@ -109,33 +142,9 @@ class SettingsView(LoginRequiredMixin, UpdateView):
         context['addresses'] = Address.objects.filter(user=self.request.user)
         context['address_form'] = AddressForm()
         return context
-
-
-class OrderDetailView(LoginRequiredMixin, TemplateView):
-    template_name = 'users/order_detail.html'
-    login_url = 'users:login'
-
-    def get_context_data(self, **kwargs):
-
-        context = super().get_context_data(**kwargs)
-
-        order_id = self.kwargs.get('order_id')
-
-        order = get_object_or_404(Order, id=order_id, user=self.request.user)
-
-        context['order'] = order
-
-        return context
     
-class CustomPasswordChangeView(auth_views.PasswordChangeView):
-    login_url = 'users:login'
-    template_name = 'users/change_password.html'
-    success_url = reverse_lazy('users:settings')
-    
-    def form_valid(self, form):
-        messages.success(self.request, "Your password has been updated successfully!")
-        return super().form_valid(form)
-    
+# address management 
+
 @login_required
 def add_address(request):
     if request.method == 'POST':
@@ -169,16 +178,7 @@ def set_default_address(request, address_id):
     messages.success(request, f"{address.name} is now your default address!")
     return redirect('users:settings')
 
-@login_required
-def delete_account(request):
-    if request.method == 'POST':
-        user = request.user
-        logout(request)
-        user.delete()
-        messages.success(request, "Your account and all associated data have been permanently deleted.")
-        return redirect('home')
-    
-    return redirect('users:settings')
+# subscription management
 
 @login_required
 def pause_subscription(request, subscription_id):
@@ -220,3 +220,16 @@ def cancel_subscription(request, subscription_id):
         messages.warning(request, f"Your subscription for {subscription.product.name} has been permanently cancelled.")
 
     return redirect('users:subscriptions')
+
+# delet acc
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        user = request.user
+        logout(request)
+        user.delete()
+        messages.success(request, "Your account and all associated data have been permanently deleted.")
+        return redirect('home')
+    
+    return redirect('users:settings')

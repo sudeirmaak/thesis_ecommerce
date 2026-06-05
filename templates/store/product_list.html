@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block content%}
+{% block content %}
 
 <div class="container my-5">
 
@@ -85,9 +85,9 @@
 
                             {% if product.tags %}
                                 <div class="mb-3 d-flex flex-wrap gap-1">
-                                    {% for tag in product.tags.split|slice:":3" %}
+                                    {% for tag in product.get_tags_list|slice:":3" %}
                                         <span class="badge bg-light text-secondary border rounded-pill px-2 py-1 font-monospace" style="font-size: 0.7rem;">
-                                            #{{ tag|cut:"," }}
+                                            #{{ tag }}
                                         </span>
                                     {% endfor %}
                                 </div>

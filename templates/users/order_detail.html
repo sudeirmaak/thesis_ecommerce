@@ -12,17 +12,17 @@
         </div>
 
         <div>
-        {% if order.status == 'P' %}
-            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
-        {% elif order.status == 'A' %}
-            <span class="badge bg-primary px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
-        {% elif order.status == 'S' %}
-            <span class="badge bg-info text-dark px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
-        {% elif order.status == 'D' %}
-            <span class="badge bg-success px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
-        {% else %}
-            <span class="badge bg-danger px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
-        {% endif %}
+            {% if order.status == 'P' %}
+                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
+            {% elif order.status == 'A' %}
+                <span class="badge bg-primary px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
+            {% elif order.status == 'S' %}
+                <span class="badge bg-info text-dark px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
+            {% elif order.status == 'D' %}
+                <span class="badge bg-success px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
+            {% else %}
+                <span class="badge bg-danger px-3 py-2 rounded-pill">{{ order.get_status_display }}</span>
+            {% endif %}
         </div>
 
     </div>

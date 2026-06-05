@@ -50,5 +50,5 @@ class ReviewForm(forms.ModelForm):
         widgets = {
             'comment': forms.Textarea(attrs={'class': 'form-control border-dark',
                                              'rows': 4,
-                                             'placeholder': 'Share you thoughts...'}),
+                                             'placeholder': 'Share your thoughts...'}),
         }

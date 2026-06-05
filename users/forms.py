@@ -4,6 +4,8 @@ from django import forms
 from .models import Address
 import re
 
+#auth forms
+
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = get_user_model()
@@ -45,13 +47,15 @@ class CustomSetPasswordForm(SetPasswordForm):
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
 
+# profile and address forms
+
 class CustomUserUpdateForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
         fields = ('first_name', 'last_name', 'email', 'phone_number')
 
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
